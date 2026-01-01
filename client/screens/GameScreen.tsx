@@ -10,12 +10,10 @@ import { getSettings, getStabilityTokens, setStabilityTokens } from "@/lib/stora
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
-  withSpring,
+  withTiming,
   withRepeat,
   withSequence,
-  withTiming,
   Easing,
-  runOnJS,
   cancelAnimation,
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
@@ -25,6 +23,9 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList, "Game">;
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const INITIAL_GRID_SIZE = 5;
 const TILE_GAP = 4;
+const INITIAL_CRACK_DELAY = 1500;
+const MIN_CRACK_DELAY = 300;
+const CRACK_SPEEDUP_RATE = 15;
 
 type TileState = "safe" | "cracking" | "gone";
 
@@ -39,13 +40,11 @@ export default function GameScreen() {
   const navigation = useNavigation<NavigationProp>();
   const insets = useSafeAreaInsets();
   
-  const [gridSize, setGridSize] = useState(INITIAL_GRID_SIZE);
   const [tiles, setTiles] = useState<Tile[]>([]);
   const [playerPosition, setPlayerPosition] = useState({ row: 2, col: 2 });
   const [timeSurvived, setTimeSurvived] = useState(0);
   const [multiplier, setMultiplier] = useState(1);
   const [gameActive, setGameActive] = useState(true);
-  const [lastMoveTime, setLastMoveTime] = useState(0);
   const [stabilityTokenUsed, setStabilityTokenUsed] = useState(false);
   const [hasStabilityToken, setHasStabilityToken] = useState(false);
   const [vibrationEnabled, setVibrationEnabled] = useState(true);
@@ -54,6 +53,13 @@ export default function GameScreen() {
   const multiplierAccumulator = useRef<number[]>([]);
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
   const crackTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const lastMoveTimeRef = useRef<number>(Date.now());
+  const gameActiveRef = useRef<boolean>(true);
+  const playerPositionRef = useRef({ row: 2, col: 2 });
+  const tilesRef = useRef<Tile[]>([]);
+  const hasStabilityTokenRef = useRef(false);
+  const stabilityTokenUsedRef = useRef(false);
+  const startTimeRef = useRef<number>(Date.now());
   
   const buttonScale = useSharedValue(1);
   const multiplierGlow = useSharedValue(0);
@@ -61,11 +67,11 @@ export default function GameScreen() {
   const playerY = useSharedValue(2);
 
   const gridWidth = SCREEN_WIDTH - Spacing["2xl"] * 2;
-  const tileSize = (gridWidth - (gridSize - 1) * TILE_GAP) / gridSize;
+  const tileSize = (gridWidth - (INITIAL_GRID_SIZE - 1) * TILE_GAP) / INITIAL_GRID_SIZE;
 
   useEffect(() => {
-    initGame();
     loadSettings();
+    initGame();
     return () => {
       if (gameLoopRef.current) clearInterval(gameLoopRef.current);
       if (crackTimerRef.current) clearTimeout(crackTimerRef.current);
@@ -80,6 +86,7 @@ export default function GameScreen() {
     setVibrationEnabled(settings.vibrationEnabled);
     setVisualWarningsEnabled(settings.visualWarningsEnabled);
     setHasStabilityToken(tokens > 0);
+    hasStabilityTokenRef.current = tokens > 0;
   };
 
   const initGame = () => {
@@ -95,144 +102,165 @@ export default function GameScreen() {
       }
     }
     setTiles(initialTiles);
+    tilesRef.current = initialTiles;
     setPlayerPosition({ row: 2, col: 2 });
+    playerPositionRef.current = { row: 2, col: 2 };
     playerX.value = 2;
     playerY.value = 2;
+    startTimeRef.current = Date.now();
+    lastMoveTimeRef.current = Date.now();
+    gameActiveRef.current = true;
     startGameLoop();
   };
 
   const startGameLoop = () => {
-    const startTime = Date.now();
-    setLastMoveTime(startTime);
-    
     gameLoopRef.current = setInterval(() => {
-      const elapsed = (Date.now() - startTime) / 1000;
+      if (!gameActiveRef.current) return;
+      
+      const elapsed = (Date.now() - startTimeRef.current) / 1000;
       setTimeSurvived(elapsed);
-      updateMultiplier(elapsed);
+      
+      const timeSinceMove = (Date.now() - lastMoveTimeRef.current) / 1000;
+      const riskLevel = Math.min(timeSinceMove / 3, 1);
+      const newMultiplier = 1 + riskLevel * 2;
+      setMultiplier(newMultiplier);
+      multiplierGlow.value = riskLevel;
     }, 100);
 
-    scheduleCrack(1000);
-  };
-
-  const updateMultiplier = (elapsed: number) => {
-    const timeSinceMove = (Date.now() - lastMoveTime) / 1000;
-    const riskLevel = Math.min(timeSinceMove / 2, 1);
-    const newMultiplier = 1 + riskLevel * 2;
-    setMultiplier(newMultiplier);
-    multiplierGlow.value = riskLevel;
+    scheduleCrack(INITIAL_CRACK_DELAY);
   };
 
   const scheduleCrack = (delay: number) => {
+    if (crackTimerRef.current) clearTimeout(crackTimerRef.current);
     crackTimerRef.current = setTimeout(() => {
       crackRandomTile();
     }, delay);
   };
 
   const crackRandomTile = () => {
-    if (!gameActive) return;
+    if (!gameActiveRef.current) return;
 
-    setTiles((currentTiles) => {
-      const safeTiles = currentTiles.filter(
-        (t) => t.state === "safe" && !(t.row === playerPosition.row && t.col === playerPosition.col)
-      );
-      
-      if (safeTiles.length === 0) {
-        endGame();
-        return currentTiles;
-      }
+    const currentTiles = tilesRef.current;
+    const safeTiles = currentTiles.filter((t) => t.state === "safe");
+    
+    if (safeTiles.length <= 1) {
+      endGame();
+      return;
+    }
 
-      const randomTile = safeTiles[Math.floor(Math.random() * safeTiles.length)];
-      
-      if (vibrationEnabled) {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      }
+    const randomTile = safeTiles[Math.floor(Math.random() * safeTiles.length)];
+    
+    if (vibrationEnabled) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
 
-      return currentTiles.map((t) =>
-        t.id === randomTile.id ? { ...t, state: "cracking" as TileState } : t
-      );
-    });
+    const updatedTiles = currentTiles.map((t) =>
+      t.id === randomTile.id ? { ...t, state: "cracking" as TileState } : t
+    );
+    setTiles(updatedTiles);
+    tilesRef.current = updatedTiles;
 
     setTimeout(() => {
-      removeCrackedTile();
+      removeCrackedTile(randomTile.id);
     }, 700);
 
-    const nextDelay = Math.max(500, 1000 - timeSurvived * 20);
+    const elapsed = (Date.now() - startTimeRef.current) / 1000;
+    const nextDelay = Math.max(MIN_CRACK_DELAY, INITIAL_CRACK_DELAY - elapsed * CRACK_SPEEDUP_RATE);
     scheduleCrack(nextDelay);
   };
 
-  const removeCrackedTile = () => {
-    setTiles((currentTiles) => {
-      const updatedTiles = currentTiles.map((t) =>
-        t.state === "cracking" ? { ...t, state: "gone" as TileState } : t
-      );
+  const removeCrackedTile = (tileId: string) => {
+    if (!gameActiveRef.current) return;
 
-      const playerTile = updatedTiles.find(
-        (t) => t.row === playerPosition.row && t.col === playerPosition.col
-      );
+    const currentTiles = tilesRef.current;
+    const tileToRemove = currentTiles.find((t) => t.id === tileId);
+    
+    if (!tileToRemove || tileToRemove.state !== "cracking") return;
 
-      if (playerTile?.state === "gone") {
-        if (hasStabilityToken && !stabilityTokenUsed) {
-          useStabilityToken(updatedTiles);
-          return updatedTiles.map((t) =>
-            t.id === playerTile.id ? { ...t, state: "safe" as TileState } : t
-          );
-        } else {
-          setTimeout(() => endGame(), 100);
-        }
+    const playerPos = playerPositionRef.current;
+    const isPlayerOnTile = tileToRemove.row === playerPos.row && tileToRemove.col === playerPos.col;
+
+    if (isPlayerOnTile) {
+      if (hasStabilityTokenRef.current && !stabilityTokenUsedRef.current) {
+        useStabilityToken();
+        const repairedTiles = currentTiles.map((t) =>
+          t.id === tileId ? { ...t, state: "safe" as TileState } : t
+        );
+        setTiles(repairedTiles);
+        tilesRef.current = repairedTiles;
+        return;
+      } else {
+        endGame();
+        return;
       }
+    }
 
-      return updatedTiles;
-    });
+    const updatedTiles = currentTiles.map((t) =>
+      t.id === tileId ? { ...t, state: "gone" as TileState } : t
+    );
+    setTiles(updatedTiles);
+    tilesRef.current = updatedTiles;
   };
 
-  const useStabilityToken = async (currentTiles: Tile[]) => {
+  const useStabilityToken = async () => {
+    stabilityTokenUsedRef.current = true;
     setStabilityTokenUsed(true);
-    const tokens = await getStabilityTokens();
-    await setStabilityTokens(tokens - 1);
+    hasStabilityTokenRef.current = false;
     setHasStabilityToken(false);
+    
+    const tokens = await getStabilityTokens();
+    await setStabilityTokens(Math.max(0, tokens - 1));
+    
     if (vibrationEnabled) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }
   };
 
   const handleMove = useCallback(() => {
-    if (!gameActive) return;
+    if (!gameActiveRef.current) return;
 
     if (vibrationEnabled) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }
 
-    multiplierAccumulator.current.push(multiplier);
-    setLastMoveTime(Date.now());
+    const currentMultiplier = 1 + Math.min((Date.now() - lastMoveTimeRef.current) / 3000, 1) * 2;
+    multiplierAccumulator.current.push(currentMultiplier);
+    lastMoveTimeRef.current = Date.now();
 
-    setTiles((currentTiles) => {
-      const safeTiles = currentTiles.filter(
-        (t) => t.state === "safe" && !(t.row === playerPosition.row && t.col === playerPosition.col)
-      );
+    const currentTiles = tilesRef.current;
+    const currentPos = playerPositionRef.current;
+    
+    const safeTiles = currentTiles.filter(
+      (t) => t.state === "safe" && !(t.row === currentPos.row && t.col === currentPos.col)
+    );
 
-      if (safeTiles.length === 0) {
-        endGame();
-        return currentTiles;
-      }
+    if (safeTiles.length === 0) {
+      endGame();
+      return;
+    }
 
-      const crackingTiles = currentTiles.filter((t) => t.state === "cracking");
-      const crackingPositions = new Set(crackingTiles.map((t) => t.id));
-      
-      const trueSafeTiles = safeTiles.filter((t) => !crackingPositions.has(t.id));
-      const targetTiles = trueSafeTiles.length > 0 ? trueSafeTiles : safeTiles;
-      
-      const newTile = targetTiles[Math.floor(Math.random() * targetTiles.length)];
-      
-      setPlayerPosition({ row: newTile.row, col: newTile.col });
-      playerX.value = withSpring(newTile.col, { damping: 15, stiffness: 200 });
-      playerY.value = withSpring(newTile.row, { damping: 15, stiffness: 200 });
-
-      return currentTiles;
-    });
-  }, [gameActive, multiplier, playerPosition, vibrationEnabled]);
+    const crackingTiles = currentTiles.filter((t) => t.state === "cracking");
+    const crackingIds = new Set(crackingTiles.map((t) => t.id));
+    
+    const trueSafeTiles = safeTiles.filter((t) => !crackingIds.has(t.id));
+    const targetTiles = trueSafeTiles.length > 0 ? trueSafeTiles : safeTiles;
+    
+    const newTile = targetTiles[Math.floor(Math.random() * targetTiles.length)];
+    
+    const newPos = { row: newTile.row, col: newTile.col };
+    setPlayerPosition(newPos);
+    playerPositionRef.current = newPos;
+    
+    playerX.value = withTiming(newTile.col, { duration: 150, easing: Easing.out(Easing.quad) });
+    playerY.value = withTiming(newTile.row, { duration: 150, easing: Easing.out(Easing.quad) });
+  }, [vibrationEnabled]);
 
   const endGame = () => {
+    if (!gameActiveRef.current) return;
+    
+    gameActiveRef.current = false;
     setGameActive(false);
+    
     if (gameLoopRef.current) clearInterval(gameLoopRef.current);
     if (crackTimerRef.current) clearTimeout(crackTimerRef.current);
     
@@ -240,20 +268,21 @@ export default function GameScreen() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     }
 
+    const elapsed = (Date.now() - startTimeRef.current) / 1000;
     const avgMultiplier =
       multiplierAccumulator.current.length > 0
         ? multiplierAccumulator.current.reduce((a, b) => a + b, 0) /
           multiplierAccumulator.current.length
         : 1;
-    const finalScore = Math.round(timeSurvived * avgMultiplier);
+    const finalScore = Math.round(elapsed * avgMultiplier);
 
     setTimeout(() => {
       navigation.navigate("GameOver", {
-        timeSurvived,
+        timeSurvived: elapsed,
         avgMultiplier,
         finalScore,
       });
-    }, 500);
+    }, 300);
   };
 
   const buttonAnimatedStyle = useAnimatedStyle(() => ({
@@ -273,11 +302,11 @@ export default function GameScreen() {
   }));
 
   const handlePressIn = () => {
-    buttonScale.value = withSpring(0.95);
+    buttonScale.value = withTiming(0.95, { duration: 100 });
   };
 
   const handlePressOut = () => {
-    buttonScale.value = withSpring(1);
+    buttonScale.value = withTiming(1, { duration: 100 });
   };
 
   return (
@@ -303,7 +332,7 @@ export default function GameScreen() {
 
       {hasStabilityToken && !stabilityTokenUsed ? (
         <View style={styles.tokenIndicator}>
-          <ThemedText style={styles.tokenText}>Stability Token Active</ThemedText>
+          <ThemedText style={styles.tokenText}>Stability Token Ready</ThemedText>
         </View>
       ) : null}
 
@@ -371,8 +400,8 @@ function TileComponent({ tile, size, gap, visualWarningsEnabled }: TileComponent
       if (visualWarningsEnabled) {
         shake.value = withRepeat(
           withSequence(
-            withTiming(-3, { duration: 50 }),
-            withTiming(3, { duration: 50 })
+            withTiming(-2, { duration: 60 }),
+            withTiming(2, { duration: 60 })
           ),
           -1,
           true
@@ -381,8 +410,8 @@ function TileComponent({ tile, size, gap, visualWarningsEnabled }: TileComponent
     } else if (tile.state === "gone") {
       cancelAnimation(shake);
       shake.value = 0;
-      scale.value = withTiming(0.5, { duration: 300, easing: Easing.out(Easing.ease) });
-      opacity.value = withTiming(0, { duration: 300 });
+      scale.value = withTiming(0.3, { duration: 250, easing: Easing.out(Easing.ease) });
+      opacity.value = withTiming(0, { duration: 250 });
     } else {
       cancelAnimation(shake);
       shake.value = 0;
