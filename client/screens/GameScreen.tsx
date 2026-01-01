@@ -49,6 +49,7 @@ export default function GameScreen() {
   const [stabilityTokenUsed, setStabilityTokenUsed] = useState(false);
   const [hasStabilityToken, setHasStabilityToken] = useState(false);
   const [vibrationEnabled, setVibrationEnabled] = useState(true);
+  const [visualWarningsEnabled, setVisualWarningsEnabled] = useState(true);
   
   const multiplierAccumulator = useRef<number[]>([]);
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
@@ -77,6 +78,7 @@ export default function GameScreen() {
       getStabilityTokens(),
     ]);
     setVibrationEnabled(settings.vibrationEnabled);
+    setVisualWarningsEnabled(settings.visualWarningsEnabled);
     setHasStabilityToken(tokens > 0);
   };
 
@@ -313,6 +315,7 @@ export default function GameScreen() {
               tile={tile}
               size={tileSize}
               gap={TILE_GAP}
+              visualWarningsEnabled={visualWarningsEnabled}
             />
           ))}
           <Animated.View
@@ -355,23 +358,26 @@ interface TileComponentProps {
   tile: Tile;
   size: number;
   gap: number;
+  visualWarningsEnabled: boolean;
 }
 
-function TileComponent({ tile, size, gap }: TileComponentProps) {
+function TileComponent({ tile, size, gap, visualWarningsEnabled }: TileComponentProps) {
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);
   const shake = useSharedValue(0);
 
   useEffect(() => {
     if (tile.state === "cracking") {
-      shake.value = withRepeat(
-        withSequence(
-          withTiming(-3, { duration: 50 }),
-          withTiming(3, { duration: 50 })
-        ),
-        -1,
-        true
-      );
+      if (visualWarningsEnabled) {
+        shake.value = withRepeat(
+          withSequence(
+            withTiming(-3, { duration: 50 }),
+            withTiming(3, { duration: 50 })
+          ),
+          -1,
+          true
+        );
+      }
     } else if (tile.state === "gone") {
       cancelAnimation(shake);
       shake.value = 0;
@@ -383,7 +389,7 @@ function TileComponent({ tile, size, gap }: TileComponentProps) {
       scale.value = 1;
       opacity.value = 1;
     }
-  }, [tile.state]);
+  }, [tile.state, visualWarningsEnabled]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
@@ -394,12 +400,15 @@ function TileComponent({ tile, size, gap }: TileComponentProps) {
     opacity: opacity.value,
   }));
 
-  const backgroundColor =
-    tile.state === "safe"
-      ? GameColors.safe
-      : tile.state === "cracking"
-      ? GameColors.warning
-      : "transparent";
+  const getBackgroundColor = () => {
+    if (tile.state === "safe") return GameColors.safe;
+    if (tile.state === "cracking") {
+      return visualWarningsEnabled ? GameColors.warning : GameColors.safe;
+    }
+    return "transparent";
+  };
+
+  const backgroundColor = getBackgroundColor();
 
   return (
     <Animated.View
