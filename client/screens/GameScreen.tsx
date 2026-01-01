@@ -26,6 +26,18 @@ const TILE_GAP = 4;
 const INITIAL_CRACK_DELAY = 1500;
 const MIN_CRACK_DELAY = 300;
 const CRACK_SPEEDUP_RATE = 15;
+const MULTIPLIER_MAX_TIME = 6;
+
+const NEON_PALETTES = [
+  { safe: "#00FF88", accent: "#00FFCC" },
+  { safe: "#FF00FF", accent: "#FF66FF" },
+  { safe: "#00BFFF", accent: "#66D9FF" },
+  { safe: "#FFFF00", accent: "#FFFF66" },
+  { safe: "#FF6600", accent: "#FF9933" },
+  { safe: "#9933FF", accent: "#CC66FF" },
+  { safe: "#FF0066", accent: "#FF3399" },
+  { safe: "#00FF00", accent: "#66FF66" },
+];
 
 type TileState = "safe" | "cracking" | "gone";
 
@@ -51,8 +63,11 @@ export default function GameScreen() {
   const [visualWarningsEnabled, setVisualWarningsEnabled] = useState(true);
   const [gridNumber, setGridNumber] = useState(1);
   const [showTokenUsedFeedback, setShowTokenUsedFeedback] = useState(false);
+  const [currentScore, setCurrentScore] = useState(0);
+  const [currentPalette, setCurrentPalette] = useState(NEON_PALETTES[0]);
   
   const multiplierAccumulator = useRef<number[]>([]);
+  const scoreRef = useRef(0);
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
   const crackTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastMoveTimeRef = useRef<number>(Date.now());
@@ -116,6 +131,10 @@ export default function GameScreen() {
     gridStartTimeRef.current = Date.now();
     gridNumberRef.current = 1;
     setGridNumber(1);
+    scoreRef.current = 0;
+    setCurrentScore(0);
+    setCurrentPalette(NEON_PALETTES[0]);
+    multiplierAccumulator.current = [];
     gameActiveRef.current = true;
     startGameLoop();
   };
@@ -127,6 +146,21 @@ export default function GameScreen() {
     gridNumberRef.current = newGridNumber;
     setGridNumber(newGridNumber);
     gridStartTimeRef.current = Date.now();
+    
+    const newPalette = NEON_PALETTES[(newGridNumber - 1) % NEON_PALETTES.length];
+    setCurrentPalette(newPalette);
+    
+    const timeSinceMove = (Date.now() - lastMoveTimeRef.current) / 1000;
+    const currentMultiplier = 1 + Math.min(timeSinceMove / MULTIPLIER_MAX_TIME, 1) * 2;
+    
+    const segmentScore = Math.round(timeSinceMove * currentMultiplier);
+    scoreRef.current += segmentScore;
+    multiplierAccumulator.current.push(currentMultiplier);
+    
+    const gridBonus = Math.round(10 * currentMultiplier);
+    scoreRef.current += gridBonus;
+    setCurrentScore(scoreRef.current);
+    lastMoveTimeRef.current = Date.now();
     
     if (vibrationEnabled) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -158,7 +192,7 @@ export default function GameScreen() {
       setTimeSurvived(elapsed);
       
       const timeSinceMove = (Date.now() - lastMoveTimeRef.current) / 1000;
-      const riskLevel = Math.min(timeSinceMove / 3, 1);
+      const riskLevel = Math.min(timeSinceMove / MULTIPLIER_MAX_TIME, 1);
       const newMultiplier = 1 + riskLevel * 2;
       setMultiplier(newMultiplier);
       multiplierGlow.value = riskLevel;
@@ -267,8 +301,14 @@ export default function GameScreen() {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }
 
-    const currentMultiplier = 1 + Math.min((Date.now() - lastMoveTimeRef.current) / 3000, 1) * 2;
+    const timeSinceMove = (Date.now() - lastMoveTimeRef.current) / 1000;
+    const currentMultiplier = 1 + Math.min(timeSinceMove / MULTIPLIER_MAX_TIME, 1) * 2;
     multiplierAccumulator.current.push(currentMultiplier);
+    
+    const scoreForThisSegment = Math.round(timeSinceMove * currentMultiplier);
+    scoreRef.current += scoreForThisSegment;
+    setCurrentScore(scoreRef.current);
+    
     lastMoveTimeRef.current = Date.now();
 
     const currentTiles = tilesRef.current;
@@ -312,6 +352,12 @@ export default function GameScreen() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     }
 
+    const timeSinceMove = (Date.now() - lastMoveTimeRef.current) / 1000;
+    const finalMultiplier = 1 + Math.min(timeSinceMove / MULTIPLIER_MAX_TIME, 1) * 2;
+    const remainingScore = Math.round(timeSinceMove * finalMultiplier);
+    scoreRef.current += remainingScore;
+    multiplierAccumulator.current.push(finalMultiplier);
+
     const elapsed = (Date.now() - startTimeRef.current) / 1000;
     const gridsBeaten = gridNumberRef.current - 1;
     const avgMultiplier =
@@ -319,7 +365,7 @@ export default function GameScreen() {
         ? multiplierAccumulator.current.reduce((a, b) => a + b, 0) /
           multiplierAccumulator.current.length
         : 1;
-    const finalScore = Math.round((elapsed + gridsBeaten * 10) * avgMultiplier);
+    const finalScore = scoreRef.current;
 
     setTimeout(() => {
       navigation.navigate("GameOver", {
@@ -360,8 +406,8 @@ export default function GameScreen() {
     <View style={[styles.container, { paddingTop: insets.top + Spacing.lg }]}>
       <View style={styles.header}>
         <View style={styles.timerContainer}>
-          <ThemedText style={styles.timerLabel}>Time</ThemedText>
-          <ThemedText style={styles.timerValue}>{timeSurvived.toFixed(1)}s</ThemedText>
+          <ThemedText style={styles.timerLabel}>Score</ThemedText>
+          <ThemedText style={[styles.timerValue, { color: currentPalette.safe }]}>{currentScore}</ThemedText>
         </View>
         <View style={styles.gridIndicator}>
           <ThemedText style={styles.gridLabel}>Grid</ThemedText>
@@ -372,7 +418,7 @@ export default function GameScreen() {
           <ThemedText
             style={[
               styles.multiplierValue,
-              multiplier > 1.5 && styles.multiplierGlow,
+              multiplier > 1.5 && { color: currentPalette.accent },
               multiplier > 2.5 && styles.multiplierIntense,
             ]}
           >
@@ -400,6 +446,7 @@ export default function GameScreen() {
               size={tileSize}
               gap={TILE_GAP}
               visualWarningsEnabled={visualWarningsEnabled}
+              palette={currentPalette}
             />
           ))}
           <Animated.View
@@ -409,6 +456,7 @@ export default function GameScreen() {
                 width: tileSize * 0.6,
                 height: tileSize * 0.6,
                 borderRadius: tileSize * 0.3,
+                backgroundColor: currentPalette.accent,
               },
               playerAnimatedStyle,
             ]}
@@ -426,6 +474,7 @@ export default function GameScreen() {
           <Animated.View
             style={[
               styles.moveButton,
+              { backgroundColor: currentPalette.safe },
               !gameActive && styles.moveButtonDisabled,
               buttonAnimatedStyle,
             ]}
@@ -443,9 +492,10 @@ interface TileComponentProps {
   size: number;
   gap: number;
   visualWarningsEnabled: boolean;
+  palette: { safe: string; accent: string };
 }
 
-function TileComponent({ tile, size, gap, visualWarningsEnabled }: TileComponentProps) {
+function TileComponent({ tile, size, gap, visualWarningsEnabled, palette }: TileComponentProps) {
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);
   const shake = useSharedValue(0);
@@ -485,9 +535,9 @@ function TileComponent({ tile, size, gap, visualWarningsEnabled }: TileComponent
   }));
 
   const getBackgroundColor = () => {
-    if (tile.state === "safe") return GameColors.safe;
+    if (tile.state === "safe") return palette.safe;
     if (tile.state === "cracking") {
-      return visualWarningsEnabled ? GameColors.warning : GameColors.safe;
+      return visualWarningsEnabled ? GameColors.warning : palette.safe;
     }
     return "transparent";
   };
