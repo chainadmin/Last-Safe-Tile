@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { View, StyleSheet, Pressable } from "react-native";
-import { useNavigation, useRoute, CommonActions } from "@react-navigation/native";
+import { useNavigation, useRoute, CommonActions, useFocusEffect } from "@react-navigation/native";
 import type { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { BlurView } from "expo-blur";
@@ -26,6 +26,8 @@ import * as Haptics from "expo-haptics";
 
 type Props = NativeStackScreenProps<RootStackParamList, "GameOver">;
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, "GameOver">;
+
+const CONTINUE_COST = 10;
 
 interface ActionButtonProps {
   title: string;
@@ -97,7 +99,7 @@ function ActionButton({ title, icon, onPress, variant, subtitle, disabled }: Act
 export default function GameOverScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<Props["route"]>();
-  const { timeSurvived, avgMultiplier, finalScore } = route.params;
+  const { timeSurvived, avgMultiplier, finalScore, gridsBeaten, stabilityTokenUsed } = route.params;
 
   const [isNewHighScore, setIsNewHighScore] = useState(false);
   const [coins, setCoins] = useState(0);
@@ -107,6 +109,12 @@ export default function GameOverScreen() {
     checkHighScore();
     loadData();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+    }, [])
+  );
 
   const checkHighScore = async () => {
     const currentHighScore = await getHighScore();
@@ -139,9 +147,13 @@ export default function GameOverScreen() {
   }, [navigation, dailyRetryAvailable]);
 
   const handleContinue = useCallback(async () => {
-    const success = await spendCoins(10);
+    if (coins < CONTINUE_COST) {
+      navigation.navigate("Store");
+      return;
+    }
+    const success = await spendCoins(CONTINUE_COST);
     if (success) {
-      setCoins((c) => c - 10);
+      setCoins((c) => c - CONTINUE_COST);
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
@@ -149,7 +161,7 @@ export default function GameOverScreen() {
         })
       );
     }
-  }, [navigation]);
+  }, [navigation, coins]);
 
   const handleHome = useCallback(() => {
     navigation.dispatch(
@@ -177,10 +189,21 @@ export default function GameOverScreen() {
         <ThemedText style={styles.title}>YOU LASTED</ThemedText>
         <ThemedText style={styles.timeValue}>{timeSurvived.toFixed(1)}s</ThemedText>
 
+        {stabilityTokenUsed ? (
+          <View style={styles.tokenUsedBadge}>
+            <Feather name="shield" size={14} color={GameColors.success} />
+            <ThemedText style={styles.tokenUsedText}>Stability Token Used</ThemedText>
+          </View>
+        ) : null}
+
         <View style={styles.statsContainer}>
           <View style={styles.statRow}>
             <ThemedText style={styles.statLabel}>Time</ThemedText>
             <ThemedText style={styles.statValue}>{timeSurvived.toFixed(1)}s</ThemedText>
+          </View>
+          <View style={styles.statRow}>
+            <ThemedText style={styles.statLabel}>Grids Beaten</ThemedText>
+            <ThemedText style={styles.statValue}>{gridsBeaten}</ThemedText>
           </View>
           <View style={styles.statRow}>
             <ThemedText style={styles.statLabel}>Avg Multiplier</ThemedText>
@@ -203,12 +226,11 @@ export default function GameOverScreen() {
           />
 
           <ActionButton
-            title="Continue"
-            icon="zap"
+            title={coins < CONTINUE_COST ? "Get Coins" : "Continue"}
+            icon={coins < CONTINUE_COST ? "shopping-cart" : "zap"}
             onPress={handleContinue}
             variant="premium"
-            subtitle={`10 coins (${coins} available)`}
-            disabled={coins < 10}
+            subtitle={coins < CONTINUE_COST ? `Need ${CONTINUE_COST} coins` : `${CONTINUE_COST} coins (${coins} available)`}
           />
 
           <ActionButton
@@ -256,6 +278,21 @@ const styles = StyleSheet.create({
   newHighScoreText: {
     ...Typography.small,
     color: GameColors.premium,
+    fontWeight: "600",
+  },
+  tokenUsedBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: GameColors.surfaceLight,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.full,
+    marginBottom: Spacing.lg,
+    gap: Spacing.sm,
+  },
+  tokenUsedText: {
+    ...Typography.small,
+    color: GameColors.success,
     fontWeight: "600",
   },
   title: {

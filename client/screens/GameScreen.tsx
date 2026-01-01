@@ -49,6 +49,8 @@ export default function GameScreen() {
   const [hasStabilityToken, setHasStabilityToken] = useState(false);
   const [vibrationEnabled, setVibrationEnabled] = useState(true);
   const [visualWarningsEnabled, setVisualWarningsEnabled] = useState(true);
+  const [gridNumber, setGridNumber] = useState(1);
+  const [showTokenUsedFeedback, setShowTokenUsedFeedback] = useState(false);
   
   const multiplierAccumulator = useRef<number[]>([]);
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
@@ -60,6 +62,8 @@ export default function GameScreen() {
   const hasStabilityTokenRef = useRef(false);
   const stabilityTokenUsedRef = useRef(false);
   const startTimeRef = useRef<number>(Date.now());
+  const gridNumberRef = useRef(1);
+  const gridStartTimeRef = useRef<number>(Date.now());
   
   const buttonScale = useSharedValue(1);
   const multiplierGlow = useSharedValue(0);
@@ -109,8 +113,41 @@ export default function GameScreen() {
     playerY.value = 2;
     startTimeRef.current = Date.now();
     lastMoveTimeRef.current = Date.now();
+    gridStartTimeRef.current = Date.now();
+    gridNumberRef.current = 1;
+    setGridNumber(1);
     gameActiveRef.current = true;
     startGameLoop();
+  };
+
+  const transitionToNextGrid = () => {
+    if (!gameActiveRef.current) return;
+    
+    const newGridNumber = gridNumberRef.current + 1;
+    gridNumberRef.current = newGridNumber;
+    setGridNumber(newGridNumber);
+    gridStartTimeRef.current = Date.now();
+    
+    if (vibrationEnabled) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }
+    
+    const newTiles: Tile[] = [];
+    for (let row = 0; row < INITIAL_GRID_SIZE; row++) {
+      for (let col = 0; col < INITIAL_GRID_SIZE; col++) {
+        newTiles.push({
+          id: `g${newGridNumber}-${row}-${col}`,
+          row,
+          col,
+          state: "safe",
+        });
+      }
+    }
+    setTiles(newTiles);
+    tilesRef.current = newTiles;
+    
+    const baseDelay = Math.max(MIN_CRACK_DELAY, INITIAL_CRACK_DELAY - (newGridNumber - 1) * 200);
+    scheduleCrack(baseDelay);
   };
 
   const startGameLoop = () => {
@@ -142,6 +179,12 @@ export default function GameScreen() {
 
     const currentTiles = tilesRef.current;
     const safeTiles = currentTiles.filter((t) => t.state === "safe");
+    const nonGoneTiles = currentTiles.filter((t) => t.state !== "gone");
+    
+    if (nonGoneTiles.length <= 3) {
+      transitionToNextGrid();
+      return;
+    }
     
     if (safeTiles.length <= 1) {
       endGame();
@@ -149,8 +192,6 @@ export default function GameScreen() {
     }
 
     const randomTile = safeTiles[Math.floor(Math.random() * safeTiles.length)];
-    const playerPos = playerPositionRef.current;
-    const isPlayerTile = randomTile.row === playerPos.row && randomTile.col === playerPos.col;
     
     if (vibrationEnabled) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -166,8 +207,9 @@ export default function GameScreen() {
       removeCrackedTile(randomTile.id, randomTile.row, randomTile.col);
     }, 700);
 
-    const elapsed = (Date.now() - startTimeRef.current) / 1000;
-    const nextDelay = Math.max(MIN_CRACK_DELAY, INITIAL_CRACK_DELAY - elapsed * CRACK_SPEEDUP_RATE);
+    const gridElapsed = (Date.now() - gridStartTimeRef.current) / 1000;
+    const baseDelay = Math.max(MIN_CRACK_DELAY, INITIAL_CRACK_DELAY - (gridNumberRef.current - 1) * 200);
+    const nextDelay = Math.max(MIN_CRACK_DELAY, baseDelay - gridElapsed * CRACK_SPEEDUP_RATE);
     scheduleCrack(nextDelay);
   };
 
@@ -206,6 +248,9 @@ export default function GameScreen() {
     setStabilityTokenUsed(true);
     hasStabilityTokenRef.current = false;
     setHasStabilityToken(false);
+    
+    setShowTokenUsedFeedback(true);
+    setTimeout(() => setShowTokenUsedFeedback(false), 2000);
     
     const tokens = await getStabilityTokens();
     await setStabilityTokens(Math.max(0, tokens - 1));
@@ -268,18 +313,21 @@ export default function GameScreen() {
     }
 
     const elapsed = (Date.now() - startTimeRef.current) / 1000;
+    const gridsBeaten = gridNumberRef.current - 1;
     const avgMultiplier =
       multiplierAccumulator.current.length > 0
         ? multiplierAccumulator.current.reduce((a, b) => a + b, 0) /
           multiplierAccumulator.current.length
         : 1;
-    const finalScore = Math.round(elapsed * avgMultiplier);
+    const finalScore = Math.round((elapsed + gridsBeaten * 10) * avgMultiplier);
 
     setTimeout(() => {
       navigation.navigate("GameOver", {
         timeSurvived: elapsed,
         avgMultiplier,
         finalScore,
+        gridsBeaten,
+        stabilityTokenUsed: stabilityTokenUsedRef.current,
       });
     }, 300);
   };
@@ -315,6 +363,10 @@ export default function GameScreen() {
           <ThemedText style={styles.timerLabel}>Time</ThemedText>
           <ThemedText style={styles.timerValue}>{timeSurvived.toFixed(1)}s</ThemedText>
         </View>
+        <View style={styles.gridIndicator}>
+          <ThemedText style={styles.gridLabel}>Grid</ThemedText>
+          <ThemedText style={styles.gridValue}>{gridNumber}</ThemedText>
+        </View>
         <Animated.View style={[styles.multiplierContainer, multiplierAnimatedStyle]}>
           <ThemedText style={styles.multiplierLabel}>Multiplier</ThemedText>
           <ThemedText
@@ -329,7 +381,11 @@ export default function GameScreen() {
         </Animated.View>
       </View>
 
-      {hasStabilityToken && !stabilityTokenUsed ? (
+      {showTokenUsedFeedback ? (
+        <View style={styles.tokenUsedFeedback}>
+          <ThemedText style={styles.tokenUsedText}>Stability Token Saved You!</ThemedText>
+        </View>
+      ) : hasStabilityToken && !stabilityTokenUsed ? (
         <View style={styles.tokenIndicator}>
           <ThemedText style={styles.tokenText}>Stability Token Ready</ThemedText>
         </View>
@@ -500,6 +556,18 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 10,
   },
+  gridIndicator: {
+    alignItems: "center",
+  },
+  gridLabel: {
+    ...Typography.small,
+    color: GameColors.textSecondary,
+  },
+  gridValue: {
+    ...Typography.displayMedium,
+    color: GameColors.textPrimary,
+    fontFamily: "monospace",
+  },
   tokenIndicator: {
     alignItems: "center",
     marginBottom: Spacing.md,
@@ -507,6 +575,20 @@ const styles = StyleSheet.create({
   tokenText: {
     ...Typography.small,
     color: GameColors.premium,
+  },
+  tokenUsedFeedback: {
+    alignItems: "center",
+    backgroundColor: GameColors.success,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.lg,
+    borderRadius: BorderRadius.md,
+    marginHorizontal: Spacing["2xl"],
+    marginBottom: Spacing.md,
+  },
+  tokenUsedText: {
+    ...Typography.body,
+    color: GameColors.background,
+    fontWeight: "600",
   },
   gridContainer: {
     flex: 1,

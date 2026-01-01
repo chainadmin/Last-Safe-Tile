@@ -18,6 +18,8 @@ export type RootStackParamList = {
     timeSurvived: number;
     avgMultiplier: number;
     finalScore: number;
+    gridsBeaten: number;
+    stabilityTokenUsed: boolean;
   };
   Store: undefined;
   Settings: undefined;
