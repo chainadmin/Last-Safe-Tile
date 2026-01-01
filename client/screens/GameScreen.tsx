@@ -149,6 +149,8 @@ export default function GameScreen() {
     }
 
     const randomTile = safeTiles[Math.floor(Math.random() * safeTiles.length)];
+    const playerPos = playerPositionRef.current;
+    const isPlayerTile = randomTile.row === playerPos.row && randomTile.col === playerPos.col;
     
     if (vibrationEnabled) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -161,7 +163,7 @@ export default function GameScreen() {
     tilesRef.current = updatedTiles;
 
     setTimeout(() => {
-      removeCrackedTile(randomTile.id);
+      removeCrackedTile(randomTile.id, randomTile.row, randomTile.col);
     }, 700);
 
     const elapsed = (Date.now() - startTimeRef.current) / 1000;
@@ -169,20 +171,16 @@ export default function GameScreen() {
     scheduleCrack(nextDelay);
   };
 
-  const removeCrackedTile = (tileId: string) => {
+  const removeCrackedTile = (tileId: string, tileRow: number, tileCol: number) => {
     if (!gameActiveRef.current) return;
 
-    const currentTiles = tilesRef.current;
-    const tileToRemove = currentTiles.find((t) => t.id === tileId);
-    
-    if (!tileToRemove || tileToRemove.state !== "cracking") return;
-
     const playerPos = playerPositionRef.current;
-    const isPlayerOnTile = tileToRemove.row === playerPos.row && tileToRemove.col === playerPos.col;
+    const isPlayerOnTile = tileRow === playerPos.row && tileCol === playerPos.col;
 
     if (isPlayerOnTile) {
       if (hasStabilityTokenRef.current && !stabilityTokenUsedRef.current) {
         useStabilityToken();
+        const currentTiles = tilesRef.current;
         const repairedTiles = currentTiles.map((t) =>
           t.id === tileId ? { ...t, state: "safe" as TileState } : t
         );
@@ -195,6 +193,7 @@ export default function GameScreen() {
       }
     }
 
+    const currentTiles = tilesRef.current;
     const updatedTiles = currentTiles.map((t) =>
       t.id === tileId ? { ...t, state: "gone" as TileState } : t
     );
