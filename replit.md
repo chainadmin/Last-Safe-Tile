@@ -6,6 +6,14 @@ Last Safe Tile is a single-player mobile reflex/survival game built with React N
 
 The game is designed for quick 10-45 second sessions with local-first data storage. It targets web initially with plans for Play Store/App Store deployment.
 
+## Recent Changes (Jan 2026)
+- Implemented complete MVP with all core game mechanics
+- Added 6 screens: Splash, Main Menu, Game, Game Over, Store, Settings
+- Implemented risk/reward multiplier system (x1.0 to x3.0)
+- Added Stability Token power item
+- Added daily free retry system
+- Connected Visual Crack Warnings toggle to gameplay
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
