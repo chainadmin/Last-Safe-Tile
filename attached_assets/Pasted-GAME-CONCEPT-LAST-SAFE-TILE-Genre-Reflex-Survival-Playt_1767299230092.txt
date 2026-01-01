@@ -1,0 +1,268 @@
+GAME CONCEPT
+“LAST SAFE TILE”
+
+Genre: Reflex / Survival
+Playtime per run: 10–45 seconds
+Controls: One finger / tap
+Platform: Web → Play Store / App Store later
+Engine: Same stack you’re already using (Phaser / JS)
+
+🧠 CORE IDEA (Simple, Addictive)
+
+You’re standing on a grid of tiles.
+
+Every second, one tile becomes unsafe
+
+Unsafe tiles crack, then fall away
+
+You must tap to move to a safe tile before yours disappears
+
+The grid shrinks over time
+
+Survive as long as possible
+
+The tension:
+
+You always feel like:
+
+“I can survive one more move…”
+
+🌟 UNIQUE TWIST (this is what makes it sell)
+You don’t choose where to go — you choose WHEN to move
+
+You tap once to move
+
+Your character auto-moves to the safest available tile
+
+The longer you wait before tapping:
+
+the riskier the move becomes
+
+but the higher your score multiplier
+
+So players constantly choose:
+
+Move early (safe, low score)
+
+Wait longer (dangerous, big score)
+
+💥 This creates natural monetization tension without being annoying.
+
+🧩 GAME RULES (Exact)
+Board
+
+Starts as 5×5
+
+Tiles have 3 states:
+
+✅ Safe
+
+⚠️ Cracking (0.7s warning)
+
+❌ Gone
+
+Each turn
+
+A random safe tile becomes ⚠️ cracking
+
+After 0.7s → tile disappears
+
+Player must tap before their tile disappears
+
+Difficulty scaling
+
+After every 5 seconds:
+
+Crack speed increases
+
+Board shrinks by removing outer tiles
+
+After 20 seconds:
+
+Two tiles crack at once
+
+After 30 seconds:
+
+Fake “safe” tiles appear (visual only)
+
+🧮 SCORING
+
+Base score: 1 point per second
+
+Risk multiplier:
+
+Move immediately → ×1
+
+Wait until last 30% of timer → up to ×3
+
+Final score = time × multiplier
+
+This makes “almost died” moments rewarding.
+
+💀 FAIL CONDITION
+
+Your tile disappears while you’re still on it
+
+Instant, clear, fair.
+
+📱 EXACT SCREENS (VERY IMPORTANT)
+1️⃣ Splash Screen (2 seconds)
+
+Game logo
+
+Subtitle: “How long can you stay?”
+
+Tap to skip
+
+2️⃣ Main Menu
+
+Buttons:
+
+▶️ Play
+
+🏆 High Score
+
+🛒 Store
+
+⚙️ Settings
+
+Small text:
+
+“Daily free retry available”
+
+3️⃣ Gameplay Screen
+
+Board centered
+
+Character sprite
+
+Top:
+
+Time survived
+
+Multiplier (x1 → x3 glow)
+
+Bottom:
+
+One button: MOVE
+
+(That’s it. Minimal UI.)
+
+4️⃣ Game Over Screen (THIS IS WHERE MONEY HAPPENS)
+
+Big text:
+
+YOU LASTED 23.4s
+
+Buttons:
+
+🔁 Retry (FREE) — if daily retries available
+
+🪙 Continue for 10 Coins (resume on last tile)
+
+🏠 Home
+
+Small text:
+
+“Continuing resets multiplier”
+
+This makes paying a strategic choice, not cheating.
+
+5️⃣ Store Screen (Simple but effective)
+Coin Packs
+
+50 Coins – $0.99
+
+120 Coins – $1.99 (Most Popular)
+
+300 Coins – $3.99
+
+What coins do
+
+Continue after death
+
+Buy “Stability Token” (see below)
+
+🪙 OPTIONAL POWER ITEM (non-pay-to-win)
+Stability Token
+
+Cost: 5 coins
+
+Effect:
+
+Prevents your tile from cracking once
+
+Limit:
+
+Max 1 per run
+
+This avoids pay-to-win while still monetizing.
+
+💰 MONETIZATION SUMMARY (Clean & Ethical)
+
+✅ Free to play
+
+✅ No ads required (optional later)
+
+✅ No forced payments
+
+✅ Monetization happens after failure
+
+✅ Skill still matters
+
+This passes app store reviews easily.
+
+⏱️ 1-DAY BUILD PLAN (REALISTIC)
+Hour 1–2
+
+Basic grid
+
+Tile states
+
+Timer logic
+
+Hour 3
+
+Character movement
+
+Auto-move logic
+
+Fail detection
+
+Hour 4
+
+Scoring + multiplier
+
+Game Over screen
+
+Hour 5
+
+Coins (local storage)
+
+Continue logic
+
+Hour 6
+
+Polish:
+
+tile crack animation
+
+sound
+
+glow on multiplier
+
+Ship it.
+
+🚀 WHY THIS WILL ACTUALLY SELL
+
+Short sessions
+
+Emotional near-misses
+
+Clear reason to retry
+
+Coins feel useful, not forced
+
+Easy to understand in 5 seconds
+
+This is the type of game people play while waiting in line — and those convert best.
