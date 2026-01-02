@@ -58,3 +58,5 @@ ensurePreviewReachable = "/status"
 [userenv]
 
 [userenv.shared]
+ADMOB_ANDROID_INTERSTITIAL_ID = "ca-app-pub-1580761947831808/6019505985"
+ADMOB_ANDROID_BANNER_ID = "ca-app-pub-1580761947831808/8250933561"

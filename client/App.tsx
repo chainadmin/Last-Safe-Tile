@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -9,8 +9,13 @@ import { StatusBar } from "expo-status-bar";
 import RootStackNavigator from "@/navigation/RootStackNavigator";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { GameColors } from "@/constants/theme";
+import { initializeAds } from "@/lib/ads";
 
 export default function App() {
+  useEffect(() => {
+    initializeAds();
+  }, []);
+
   return (
     <ErrorBoundary>
       <SafeAreaProvider>

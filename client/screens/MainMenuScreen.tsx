@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { View, StyleSheet, Image, Pressable } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -8,6 +8,7 @@ import { Feather } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
 import { GameColors, Spacing, Typography, BorderRadius } from "@/constants/theme";
 import { getDailyRetryAvailable, getCoins } from "@/lib/storage";
+import { AdBanner } from "@/components/BannerAd";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -156,6 +157,10 @@ export default function MainMenuScreen() {
           <ThemedText style={styles.footerText}>Daily free retry available</ThemedText>
         </Animated.View>
       ) : null}
+
+      <View style={styles.adContainer}>
+        <AdBanner />
+      </View>
     </View>
   );
 }
@@ -237,5 +242,9 @@ const styles = StyleSheet.create({
     ...Typography.small,
     color: GameColors.success,
     opacity: 0.8,
+  },
+  adContainer: {
+    alignItems: "center",
+    paddingTop: Spacing.md,
   },
 });

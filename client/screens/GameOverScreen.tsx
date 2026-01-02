@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { View, StyleSheet, Pressable } from "react-native";
 import { useNavigation, useRoute, CommonActions, useFocusEffect } from "@react-navigation/native";
 import type { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -15,6 +15,7 @@ import {
   getDailyRetryAvailable,
   useDailyRetry,
 } from "@/lib/storage";
+import { showInterstitialAd } from "@/lib/ads";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -105,10 +106,16 @@ export default function GameOverScreen() {
   const [isNewHighScore, setIsNewHighScore] = useState(false);
   const [coins, setCoins] = useState(0);
   const [dailyRetryAvailable, setDailyRetryAvailable] = useState(false);
+  const adShownRef = useRef(false);
 
   useEffect(() => {
     checkHighScore();
     loadData();
+    
+    if (!adShownRef.current) {
+      adShownRef.current = true;
+      showInterstitialAd();
+    }
   }, []);
 
   useFocusEffect(
