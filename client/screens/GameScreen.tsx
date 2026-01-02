@@ -28,7 +28,7 @@ const INITIAL_CRACK_DELAY = 1500;
 const MIN_CRACK_DELAY = 300;
 const CRACK_SPEEDUP_RATE = 15;
 const MULTIPLIER_MAX_TIME = 6;
-const MIN_MOVE_INTERVAL = 300;
+const MIN_MOVE_INTERVAL = 450;
 
 const NEON_PALETTES = [
   { safe: "#00FF88", accent: "#00FFCC" },
@@ -235,21 +235,47 @@ export default function GameScreen() {
     if (!gameActiveRef.current) return;
 
     const currentTiles = tilesRef.current;
+    const playerPos = playerPositionRef.current;
     const safeTiles = currentTiles.filter((t) => t.state === "safe");
     const nonGoneTiles = currentTiles.filter((t) => t.state !== "gone");
     
-    if (nonGoneTiles.length <= 3) {
+    if (nonGoneTiles.length <= 2 || safeTiles.length <= 1) {
       transitionToNextGrid();
       return;
     }
 
-    const tilesToCrack = Math.min(
-      gridNumberRef.current >= 4 ? 3 : gridNumberRef.current >= 2 ? 2 : 1,
-      safeTiles.length - 1
+    const playerTile = safeTiles.find(
+      (t) => t.row === playerPos.row && t.col === playerPos.col
     );
+    const otherSafeTiles = safeTiles.filter(
+      (t) => !(t.row === playerPos.row && t.col === playerPos.col)
+    );
+
+    const maxTilesToCrack = gridNumberRef.current >= 4 ? 3 : gridNumberRef.current >= 2 ? 2 : 1;
     
-    const shuffled = [...safeTiles].sort(() => Math.random() - 0.5);
-    const selectedTiles = shuffled.slice(0, tilesToCrack);
+    const shuffledOther = [...otherSafeTiles].sort(() => Math.random() - 0.5);
+    
+    let selectedTiles: Tile[] = [];
+    
+    if (otherSafeTiles.length >= 2) {
+      const canCrackFromOther = Math.min(maxTilesToCrack, otherSafeTiles.length - 1);
+      selectedTiles = shuffledOther.slice(0, canCrackFromOther);
+      
+      if (selectedTiles.length < maxTilesToCrack && playerTile && Math.random() < 0.3) {
+        selectedTiles.push(playerTile);
+      }
+    } else if (otherSafeTiles.length === 1) {
+      if (playerTile && Math.random() < 0.5) {
+        selectedTiles = [playerTile];
+      } else {
+        selectedTiles = [otherSafeTiles[0]];
+      }
+    }
+    
+    if (selectedTiles.length === 0) {
+      transitionToNextGrid();
+      return;
+    }
     
     if (vibrationEnabled) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);

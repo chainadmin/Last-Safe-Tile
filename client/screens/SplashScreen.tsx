@@ -42,7 +42,7 @@ export default function SplashScreen() {
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
-        routes: [{ name: "MainMenu" }],
+        routes: [{ name: "Branding" }],
       })
     );
   };

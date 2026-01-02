@@ -1,6 +1,7 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SplashScreen from "@/screens/SplashScreen";
+import BrandingScreen from "@/screens/BrandingScreen";
 import MainMenuScreen from "@/screens/MainMenuScreen";
 import GameScreen from "@/screens/GameScreen";
 import GameOverScreen from "@/screens/GameOverScreen";
@@ -12,6 +13,7 @@ import { GameColors } from "@/constants/theme";
 
 export type RootStackParamList = {
   Splash: undefined;
+  Branding: undefined;
   MainMenu: undefined;
   Game: undefined;
   GameOver: {
@@ -49,6 +51,11 @@ export default function RootStackNavigator() {
         name="Splash"
         component={SplashScreen}
         options={{ headerShown: false, gestureEnabled: false }}
+      />
+      <Stack.Screen
+        name="Branding"
+        component={BrandingScreen}
+        options={{ headerShown: false, gestureEnabled: false, animation: "fade" }}
       />
       <Stack.Screen
         name="MainMenu"
