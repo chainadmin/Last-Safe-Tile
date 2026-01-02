@@ -106,13 +106,6 @@ export default function SettingsScreen() {
             value={settings.vibrationEnabled}
             onValueChange={(value) => updateSetting("vibrationEnabled", value)}
           />
-          <View style={styles.divider} />
-          <SettingRow
-            icon="eye"
-            title="Visual Crack Warnings"
-            value={settings.visualWarningsEnabled}
-            onValueChange={(value) => updateSetting("visualWarningsEnabled", value)}
-          />
         </View>
       </Animated.View>
 
