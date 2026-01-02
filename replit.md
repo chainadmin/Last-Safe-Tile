@@ -13,6 +13,8 @@ The game is designed for quick 10-45 second sessions with local-first data stora
 - Added Stability Token power item
 - Added daily free retry system
 - Connected Visual Crack Warnings toggle to gameplay
+- Added Authorize.net payment integration for in-app coin purchases
+- Added Chain Software Group branding screen
 
 ## User Preferences
 
@@ -67,6 +69,13 @@ Critical design decision: No back gestures during active gameplay to prevent acc
 - **expo-blur**: Visual blur effects
 - **@expo/vector-icons**: Icon library (Feather icons)
 - **react-native-gesture-handler**: Touch gesture handling
+
+### Payment Integration
+- **Authorize.net**: In-app purchases for coin packs ($0.99, $1.99, $3.99)
+- **Accept.js**: Client-side card tokenization via WebView (PCI compliant - raw card data never touches server)
+- **Server-side validation**: Product catalog on server prevents price tampering
+- **Required secrets**: AUTHORIZE_NET_API_LOGIN_ID, AUTHORIZE_NET_TRANSACTION_KEY, AUTHORIZE_NET_PUBLIC_CLIENT_KEY
+- **Test mode**: Uses sandbox API (apitest.authorize.net) in development
 
 ### Environment
 - **Replit-specific**: Uses REPLIT_DEV_DOMAIN and REPLIT_DOMAINS for CORS and proxy configuration
