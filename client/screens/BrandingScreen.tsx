@@ -36,7 +36,7 @@ export default function BrandingScreen() {
         style={styles.content}
       >
         <Image
-          source={require("@assets/images/chain-software-logo.jpg")}
+          source={require("../../assets/images/chain-software-logo.jpg")}
           style={styles.logo}
           resizeMode="contain"
         />
