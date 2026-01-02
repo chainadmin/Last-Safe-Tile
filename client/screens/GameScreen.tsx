@@ -257,19 +257,27 @@ export default function GameScreen() {
     
     let selectedTiles: Tile[] = [];
     
+    const playerTileChance = Math.min(0.3 + gridNumberRef.current * 0.1, 0.7);
+    
     if (otherSafeTiles.length >= 2) {
-      const canCrackFromOther = Math.min(maxTilesToCrack, otherSafeTiles.length - 1);
-      selectedTiles = shuffledOther.slice(0, canCrackFromOther);
-      
-      if (selectedTiles.length < maxTilesToCrack && playerTile && Math.random() < 0.3) {
+      if (playerTile && Math.random() < playerTileChance) {
         selectedTiles.push(playerTile);
+        const remaining = Math.min(maxTilesToCrack - 1, otherSafeTiles.length - 1);
+        if (remaining > 0) {
+          selectedTiles = selectedTiles.concat(shuffledOther.slice(0, remaining));
+        }
+      } else {
+        const canCrackFromOther = Math.min(maxTilesToCrack, otherSafeTiles.length - 1);
+        selectedTiles = shuffledOther.slice(0, canCrackFromOther);
       }
     } else if (otherSafeTiles.length === 1) {
-      if (playerTile && Math.random() < 0.5) {
+      if (playerTile && Math.random() < 0.6) {
         selectedTiles = [playerTile];
       } else {
         selectedTiles = [otherSafeTiles[0]];
       }
+    } else if (playerTile) {
+      selectedTiles = [playerTile];
     }
     
     if (selectedTiles.length === 0) {
