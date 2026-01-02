@@ -17,12 +17,7 @@ import {
   validateAndProcessPurchase,
   disconnectPurchases,
 } from "@/lib/purchases";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  FadeInDown,
-} from "react-native-reanimated";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
 interface CoinPackProps {
@@ -34,30 +29,20 @@ interface CoinPackProps {
 }
 
 function CoinPack({ coins, price, popular, onPurchase, delay }: CoinPackProps) {
-  const scale = useSharedValue(1);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
-  const handlePressIn = () => {
-    scale.value = withSpring(0.97);
-  };
-
-  const handlePressOut = () => {
-    scale.value = withSpring(1);
-  };
-
   const handlePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     onPurchase();
   };
 
   return (
-    <Pressable onPress={handlePress} onPressIn={handlePressIn} onPressOut={handlePressOut}>
-      <Animated.View 
-        entering={FadeInDown.delay(delay).springify()}
-        style={[styles.packCard, popular && styles.popularCard, animatedStyle]}
+    <Animated.View entering={FadeInDown.delay(delay).springify()}>
+      <Pressable 
+        onPress={handlePress}
+        style={({ pressed }) => [
+          styles.packCard, 
+          popular && styles.popularCard,
+          pressed && styles.packPressed
+        ]}
       >
         {popular ? (
           <View style={styles.popularBadge}>
@@ -73,8 +58,8 @@ function CoinPack({ coins, price, popular, onPurchase, delay }: CoinPackProps) {
             <ThemedText style={styles.priceText}>{price}</ThemedText>
           </View>
         </View>
-      </Animated.View>
-    </Pressable>
+      </Pressable>
+    </Animated.View>
   );
 }
 
@@ -290,8 +275,11 @@ export default function StoreScreen() {
           <ThemedText style={styles.sectionTitle}>Power Items</ThemedText>
         </Animated.View>
 
-        <Pressable onPress={handleBuyStabilityToken}>
-          <Animated.View entering={FadeInDown.delay(700).springify()} style={styles.powerItemCard}>
+        <Animated.View entering={FadeInDown.delay(700).springify()}>
+          <Pressable 
+            onPress={handleBuyStabilityToken}
+            style={({ pressed }) => [styles.powerItemCard, pressed && styles.packPressed]}
+          >
             <View style={styles.powerItemHeader}>
               <View style={styles.powerItemIcon}>
                 <Feather name="shield" size={24} color={GameColors.accent} />
@@ -310,8 +298,8 @@ export default function StoreScreen() {
                 <ThemedText style={styles.priceAmount}>5</ThemedText>
               </View>
             </View>
-          </Animated.View>
-        </Pressable>
+          </Pressable>
+        </Animated.View>
 
         <Animated.View entering={FadeInDown.delay(800).springify()} style={styles.disclaimer}>
           <Feather name="lock" size={14} color={GameColors.textSecondary} />
@@ -394,6 +382,9 @@ const styles = StyleSheet.create({
   },
   popularCard: {
     borderColor: GameColors.premium,
+  },
+  packPressed: {
+    opacity: 0.7,
   },
   popularBadge: {
     position: "absolute",
