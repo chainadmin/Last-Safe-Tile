@@ -28,6 +28,7 @@ const TILE_GAP = 4;
 const INITIAL_CRACK_DELAY = 1500;
 const MIN_CRACK_DELAY = 300;
 const CRACK_SPEEDUP_RATE = 15;
+const MAX_SPEED_LEVEL = 5;
 const MULTIPLIER_MAX_TIME = 6;
 const MIN_MOVE_INTERVAL = 450;
 
@@ -244,7 +245,8 @@ export default function GameScreen() {
     setTiles(newTiles);
     tilesRef.current = newTiles;
     
-    const baseDelay = Math.max(MIN_CRACK_DELAY, INITIAL_CRACK_DELAY - (newGridNumber - 1) * 200);
+    const speedLevel = Math.min(newGridNumber, MAX_SPEED_LEVEL);
+    const baseDelay = Math.max(MIN_CRACK_DELAY, INITIAL_CRACK_DELAY - (speedLevel - 1) * 200);
     scheduleCrack(baseDelay);
   };
 
@@ -292,13 +294,14 @@ export default function GameScreen() {
       (t) => !(t.row === playerPos.row && t.col === playerPos.col)
     );
 
-    const maxTilesToCrack = gridNumberRef.current >= 4 ? 3 : gridNumberRef.current >= 2 ? 2 : 1;
+    const level = gridNumberRef.current;
+    const maxTilesToCrack = level >= 6 ? 3 : level >= 3 ? 2 : 1;
     
     const shuffledOther = [...otherSafeTiles].sort(() => Math.random() - 0.5);
     
     let selectedTiles: Tile[] = [];
     
-    const playerTileChance = Math.min(0.3 + gridNumberRef.current * 0.1, 0.7);
+    const playerTileChance = Math.min(0.3 + level * 0.1, 0.7);
     
     if (otherSafeTiles.length >= 2) {
       if (playerTile && Math.random() < playerTileChance) {
@@ -344,7 +347,8 @@ export default function GameScreen() {
     });
 
     const gridElapsed = (Date.now() - gridStartTimeRef.current) / 1000;
-    const baseDelay = Math.max(MIN_CRACK_DELAY, INITIAL_CRACK_DELAY - (gridNumberRef.current - 1) * 200);
+    const speedLevel = Math.min(gridNumberRef.current, MAX_SPEED_LEVEL);
+    const baseDelay = Math.max(MIN_CRACK_DELAY, INITIAL_CRACK_DELAY - (speedLevel - 1) * 200);
     const nextDelay = Math.max(MIN_CRACK_DELAY, baseDelay - gridElapsed * CRACK_SPEEDUP_RATE);
     scheduleCrack(nextDelay);
   };
