@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { View, StyleSheet, ScrollView, Pressable, Alert } from "react-native";
+import { View, StyleSheet, ScrollView, Pressable, Alert, Platform } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
@@ -8,6 +8,15 @@ import { PaymentModal } from "@/components/PaymentModal";
 import { GameColors, Spacing, Typography, BorderRadius } from "@/constants/theme";
 import { getCoins, addCoins, getStabilityTokens, buyStabilityToken } from "@/lib/storage";
 import { getApiUrl } from "@/lib/query-client";
+import {
+  COIN_PACKS,
+  initializePurchases,
+  isIAPAvailable,
+  purchaseProduct,
+  setPurchaseListener,
+  validateAndProcessPurchase,
+  disconnectPurchases,
+} from "@/lib/purchases";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -81,12 +90,6 @@ interface SelectedPack {
   price: string;
 }
 
-const COIN_PACKS = [
-  { productId: "pack_50", coins: 50, price: "$0.99", popular: false },
-  { productId: "pack_120", coins: 120, price: "$1.99", popular: true },
-  { productId: "pack_300", coins: 300, price: "$3.99", popular: false },
-];
-
 export default function StoreScreen() {
   const insets = useSafeAreaInsets();
   const [coins, setCoins] = useState(0);
@@ -94,16 +97,55 @@ export default function StoreScreen() {
   const [paymentModalVisible, setPaymentModalVisible] = useState(false);
   const [selectedPack, setSelectedPack] = useState<SelectedPack | null>(null);
   const [paymentConfig, setPaymentConfig] = useState<PaymentConfig | null>(null);
+  const [iapAvailable, setIapAvailable] = useState(false);
+  const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
     loadPaymentConfig();
+    initIAP();
+
+    return () => {
+      disconnectPurchases();
+    };
   }, []);
+
+  useEffect(() => {
+    if (!iapAvailable) return;
+
+    const cleanup = setPurchaseListener(
+      async (purchase) => {
+        const result = await validateAndProcessPurchase(purchase);
+        if (result.success && result.coins) {
+          setCoins(prev => prev + result.coins!);
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          Alert.alert("Purchase Complete", `${result.coins} coins have been added!`);
+        } else {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+          Alert.alert("Purchase Failed", result.error || "Please try again");
+        }
+        setProcessing(false);
+      },
+      (error) => {
+        if (error.code !== "cancelled") {
+          Alert.alert("Purchase Error", error.message);
+        }
+        setProcessing(false);
+      }
+    );
+
+    return cleanup || undefined;
+  }, [iapAvailable]);
 
   useFocusEffect(
     useCallback(() => {
       loadData();
     }, [])
   );
+
+  const initIAP = async () => {
+    const available = await initializePurchases();
+    setIapAvailable(available);
+  };
 
   const loadPaymentConfig = async () => {
     try {
@@ -124,11 +166,23 @@ export default function StoreScreen() {
     setStabilityTokens(tokens);
   };
 
-  const handlePurchase = (pack: typeof COIN_PACKS[0]) => {
+  const handlePurchase = async (pack: typeof COIN_PACKS[0]) => {
+    if (iapAvailable && Platform.OS !== "web") {
+      setProcessing(true);
+      const result = await purchaseProduct(pack.productId);
+      if (!result.success && result.error !== "Purchase cancelled") {
+        Alert.alert("Error", result.error || "Failed to start purchase");
+        setProcessing(false);
+      } else if (result.error === "Purchase cancelled") {
+        setProcessing(false);
+      }
+      return;
+    }
+
     if (!paymentConfig?.configured) {
       Alert.alert(
         "Demo Mode",
-        `Buy ${pack.coins} coins for ${pack.price}?\n\n(Payment system not configured - coins will be added for free)`,
+        `Buy ${pack.coins} coins for ${pack.displayPrice}?\n\n(Payment system not configured - coins will be added for free)`,
         [
           { text: "Cancel", style: "cancel" },
           {
@@ -147,7 +201,7 @@ export default function StoreScreen() {
     setSelectedPack({
       productId: pack.productId,
       coins: pack.coins,
-      price: pack.price,
+      price: pack.displayPrice,
     });
     setPaymentModalVisible(true);
   };
@@ -185,6 +239,18 @@ export default function StoreScreen() {
     );
   };
 
+  const getPaymentMethodText = () => {
+    if (iapAvailable && Platform.OS !== "web") {
+      return Platform.OS === "ios" 
+        ? "Secure payments via Apple App Store"
+        : "Secure payments via Google Play";
+    }
+    if (paymentConfig?.configured) {
+      return "Secure payments powered by Authorize.net";
+    }
+    return "Payment system in demo mode";
+  };
+
   return (
     <>
       <ScrollView
@@ -211,7 +277,7 @@ export default function StoreScreen() {
             <CoinPack
               key={pack.productId}
               coins={pack.coins}
-              price={pack.price}
+              price={pack.displayPrice}
               popular={pack.popular}
               onPurchase={() => handlePurchase(pack)}
               delay={300 + index * 100}
@@ -251,15 +317,18 @@ export default function StoreScreen() {
         <Animated.View entering={FadeInDown.delay(800).springify()} style={styles.disclaimer}>
           <Feather name="lock" size={14} color={GameColors.textSecondary} />
           <ThemedText style={styles.disclaimerText}>
-            {paymentConfig?.configured 
-              ? "Secure payments powered by Authorize.net"
-              : "Payment system in demo mode"
-            }
+            {getPaymentMethodText()}
           </ThemedText>
         </Animated.View>
+
+        {processing ? (
+          <Animated.View entering={FadeInDown.springify()} style={styles.processingOverlay}>
+            <ThemedText style={styles.processingText}>Processing purchase...</ThemedText>
+          </Animated.View>
+        ) : null}
       </ScrollView>
 
-      {selectedPack && paymentConfig?.configured && paymentConfig.publicKey && paymentConfig.apiLoginId ? (
+      {selectedPack && paymentConfig?.configured && paymentConfig.publicKey && paymentConfig.apiLoginId && !iapAvailable ? (
         <PaymentModal
           visible={paymentModalVisible}
           onClose={() => {
@@ -430,5 +499,13 @@ const styles = StyleSheet.create({
     ...Typography.caption,
     color: GameColors.textSecondary,
     textAlign: "center",
+  },
+  processingOverlay: {
+    alignItems: "center",
+    paddingVertical: Spacing.lg,
+  },
+  processingText: {
+    ...Typography.body,
+    color: GameColors.textSecondary,
   },
 });

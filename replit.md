@@ -61,8 +61,9 @@ Critical design decision: No back gestures during active gameplay to prevent acc
 
 ### Storage & Database
 - **AsyncStorage**: Local persistent storage for game data
-- **Drizzle ORM**: PostgreSQL ORM (schema exists for users table)
+- **Drizzle ORM**: PostgreSQL ORM for transaction security
 - **PostgreSQL**: Database configured via DATABASE_URL environment variable
+- **processed_transactions table**: Stores validated purchase transaction IDs to prevent replay attacks across server restarts
 
 ### UI/UX
 - **expo-haptics**: Tactile feedback
@@ -71,11 +72,19 @@ Critical design decision: No back gestures during active gameplay to prevent acc
 - **react-native-gesture-handler**: Touch gesture handling
 
 ### Payment Integration
-- **Authorize.net**: In-app purchases for coin packs ($0.99, $1.99, $3.99)
-- **Accept.js**: Client-side card tokenization via WebView (PCI compliant - raw card data never touches server)
-- **Server-side validation**: Product catalog on server prevents price tampering
-- **Required secrets**: AUTHORIZE_NET_API_LOGIN_ID, AUTHORIZE_NET_TRANSACTION_KEY, AUTHORIZE_NET_PUBLIC_CLIENT_KEY
-- **Test mode**: Uses sandbox API (apitest.authorize.net) in development
+- **Multi-platform support**: iOS (Apple In-App Purchases), Android (Google Play Billing), Web (Authorize.net)
+- **Native IAP**: Uses expo-in-app-purchases for iOS/Android store purchases (requires development build)
+- **Authorize.net fallback**: Web/card payments with Accept.js for PCI-compliant tokenization
+- **Server-side validation**: Receipt validation for iOS (Apple), product catalog validation for all
+- **Product IDs**: coins_50, coins_120, coins_300 (must match App Store Connect / Google Play Console)
+- **Required secrets for Authorize.net**: AUTHORIZE_NET_API_LOGIN_ID, AUTHORIZE_NET_TRANSACTION_KEY, AUTHORIZE_NET_PUBLIC_CLIENT_KEY
+- **Optional secret for iOS validation**: APPLE_SHARED_SECRET
+- **Test mode**: Uses sandbox APIs in development
+
+### Ads (Placeholder for future implementation)
+- **AdMob ready**: Structure in client/lib/ads.ts for banner, interstitial, and rewarded ads
+- **Requires**: react-native-google-mobile-ads library + development build
+- **Ad unit IDs**: Need to be configured in AdMob console and updated in ads.ts
 
 ### Environment
 - **Replit-specific**: Uses REPLIT_DEV_DOMAIN and REPLIT_DOMAINS for CORS and proxy configuration
