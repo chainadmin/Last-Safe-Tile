@@ -113,19 +113,27 @@ export default function GameScreen() {
     return () => {
       if (gameLoopRef.current) clearInterval(gameLoopRef.current);
       if (crackTimerRef.current) clearTimeout(crackTimerRef.current);
-      audioPlayer.pause();
+      try {
+        audioPlayer.pause();
+      } catch (e) {
+        // Audio player may already be released
+      }
     };
   }, []);
 
   useEffect(() => {
     if (!settingsLoaded) return;
     
-    if (soundEnabled && gameActive) {
-      audioPlayer.loop = true;
-      audioPlayer.volume = 0.3;
-      audioPlayer.play();
-    } else {
-      audioPlayer.pause();
+    try {
+      if (soundEnabled && gameActive) {
+        audioPlayer.loop = true;
+        audioPlayer.volume = 0.3;
+        audioPlayer.play();
+      } else {
+        audioPlayer.pause();
+      }
+    } catch (e) {
+      // Audio player may not be ready or already released
     }
   }, [settingsLoaded, soundEnabled, gameActive]);
 
