@@ -231,6 +231,11 @@ export default function StoreScreen() {
         ? "Secure payments via Apple App Store"
         : "Secure payments via Google Play";
     }
+    if (Platform.OS !== "web") {
+      return Platform.OS === "ios"
+        ? "Payments via Apple App Store (requires published app)"
+        : "Payments via Google Play (requires published app)";
+    }
     if (paymentConfig?.configured) {
       return "Secure payments powered by Authorize.net";
     }
