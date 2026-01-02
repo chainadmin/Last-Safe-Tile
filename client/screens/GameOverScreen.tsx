@@ -28,6 +28,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "GameOver">;
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, "GameOver">;
 
 const CONTINUE_COST = 10;
+const INITIAL_GRID_SIZE = 5;
 
 interface ActionButtonProps {
   title: string;
@@ -99,7 +100,7 @@ function ActionButton({ title, icon, onPress, variant, subtitle, disabled }: Act
 export default function GameOverScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<Props["route"]>();
-  const { timeSurvived, avgMultiplier, finalScore, gridsBeaten, stabilityTokenUsed } = route.params;
+  const { timeSurvived, avgMultiplier, finalScore, gridsBeaten, stabilityTokenUsed, continueState } = route.params;
 
   const [isNewHighScore, setIsNewHighScore] = useState(false);
   const [coins, setCoins] = useState(0);
@@ -154,14 +155,42 @@ export default function GameOverScreen() {
     const success = await spendCoins(CONTINUE_COST);
     if (success) {
       setCoins((c) => c - CONTINUE_COST);
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: "Game" }],
-        })
-      );
+      
+      if (continueState) {
+        const freshTiles: Array<{ id: string; row: number; col: number; state: "safe" | "cracking" | "gone" }> = [];
+        for (let row = 0; row < INITIAL_GRID_SIZE; row++) {
+          for (let col = 0; col < INITIAL_GRID_SIZE; col++) {
+            freshTiles.push({
+              id: `continue-${continueState.gridNumber}-${row}-${col}`,
+              row,
+              col,
+              state: "safe",
+            });
+          }
+        }
+        
+        const resumeState = {
+          ...continueState,
+          tiles: freshTiles,
+          playerPosition: { row: 2, col: 2 },
+        };
+        
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "Game", params: { continueState: resumeState } }],
+          })
+        );
+      } else {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "Game" }],
+          })
+        );
+      }
     }
-  }, [navigation, coins]);
+  }, [navigation, coins, continueState]);
 
   const handleHome = useCallback(() => {
     navigation.dispatch(

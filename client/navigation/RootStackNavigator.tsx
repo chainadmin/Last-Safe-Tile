@@ -11,17 +11,27 @@ import HighScoreScreen from "@/screens/HighScoreScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { GameColors } from "@/constants/theme";
 
+export interface ContinueState {
+  tiles: Array<{ id: string; row: number; col: number; state: "safe" | "cracking" | "gone" }>;
+  playerPosition: { row: number; col: number };
+  gridNumber: number;
+  currentScore: number;
+  elapsedTime: number;
+  paletteIndex: number;
+}
+
 export type RootStackParamList = {
   Splash: undefined;
   Branding: undefined;
   MainMenu: undefined;
-  Game: undefined;
+  Game: { continueState?: ContinueState } | undefined;
   GameOver: {
     timeSurvived: number;
     avgMultiplier: number;
     finalScore: number;
     gridsBeaten: number;
     stabilityTokenUsed: boolean;
+    continueState?: ContinueState;
   };
   Store: undefined;
   Settings: undefined;

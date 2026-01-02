@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { View, StyleSheet, Pressable, Dimensions } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { RootStackParamList } from "@/navigation/RootStackNavigator";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import type { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
+import type { RootStackParamList, ContinueState } from "@/navigation/RootStackNavigator";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/ThemedText";
 import { GameColors, Spacing, Typography, BorderRadius } from "@/constants/theme";
@@ -19,6 +19,7 @@ import Animated, {
 import * as Haptics from "expo-haptics";
 import { useAudioPlayer } from "expo-audio";
 
+type Props = NativeStackScreenProps<RootStackParamList, "Game">;
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, "Game">;
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -52,7 +53,10 @@ interface Tile {
 
 export default function GameScreen() {
   const navigation = useNavigation<NavigationProp>();
+  const route = useRoute<Props["route"]>();
   const insets = useSafeAreaInsets();
+  
+  const continueState = route.params?.continueState;
   
   const [tiles, setTiles] = useState<Tile[]>([]);
   const [playerPosition, setPlayerPosition] = useState({ row: 2, col: 2 });
@@ -69,6 +73,8 @@ export default function GameScreen() {
   const [showTokenUsedFeedback, setShowTokenUsedFeedback] = useState(false);
   const [currentScore, setCurrentScore] = useState(0);
   const [currentPalette, setCurrentPalette] = useState(NEON_PALETTES[0]);
+  
+  const continuedElapsedRef = useRef(0);
   
   const multiplierAccumulator = useRef<number[]>([]);
   const scoreRef = useRef(0);
@@ -98,7 +104,11 @@ export default function GameScreen() {
 
   useEffect(() => {
     loadSettings();
-    initGame();
+    if (continueState) {
+      restoreGame(continueState);
+    } else {
+      initGame();
+    }
     return () => {
       if (gameLoopRef.current) clearInterval(gameLoopRef.current);
       if (crackTimerRef.current) clearTimeout(crackTimerRef.current);
@@ -158,6 +168,37 @@ export default function GameScreen() {
     setCurrentScore(0);
     setCurrentPalette(NEON_PALETTES[0]);
     multiplierAccumulator.current = [];
+    continuedElapsedRef.current = 0;
+    gameActiveRef.current = true;
+    startGameLoop();
+  };
+
+  const restoreGame = (state: ContinueState) => {
+    const restoredTiles = state.tiles.map(t => ({ ...t, state: t.state as TileState }));
+    setTiles(restoredTiles);
+    tilesRef.current = restoredTiles;
+    
+    setPlayerPosition(state.playerPosition);
+    playerPositionRef.current = state.playerPosition;
+    playerX.value = state.playerPosition.col;
+    playerY.value = state.playerPosition.row;
+    
+    setGridNumber(state.gridNumber);
+    gridNumberRef.current = state.gridNumber;
+    
+    scoreRef.current = state.currentScore;
+    setCurrentScore(state.currentScore);
+    
+    continuedElapsedRef.current = state.elapsedTime;
+    startTimeRef.current = Date.now();
+    lastMoveTimeRef.current = Date.now();
+    gridStartTimeRef.current = Date.now();
+    
+    setCurrentPalette(NEON_PALETTES[state.paletteIndex % NEON_PALETTES.length]);
+    
+    multiplierAccumulator.current = [];
+    setMultiplier(1);
+    
     gameActiveRef.current = true;
     startGameLoop();
   };
@@ -423,7 +464,8 @@ export default function GameScreen() {
     scoreRef.current += remainingScore;
     multiplierAccumulator.current.push(finalMultiplier);
 
-    const elapsed = (Date.now() - startTimeRef.current) / 1000;
+    const sessionElapsed = (Date.now() - startTimeRef.current) / 1000;
+    const totalElapsed = continuedElapsedRef.current + sessionElapsed;
     const gridsBeaten = gridNumberRef.current - 1;
     const avgMultiplier =
       multiplierAccumulator.current.length > 0
@@ -432,13 +474,23 @@ export default function GameScreen() {
         : 1;
     const finalScore = scoreRef.current;
 
+    const currentContinueState: ContinueState = {
+      tiles: tilesRef.current.map(t => ({ id: t.id, row: t.row, col: t.col, state: t.state })),
+      playerPosition: playerPositionRef.current,
+      gridNumber: gridNumberRef.current,
+      currentScore: finalScore,
+      elapsedTime: totalElapsed,
+      paletteIndex: (gridNumberRef.current - 1) % NEON_PALETTES.length,
+    };
+
     setTimeout(() => {
       navigation.navigate("GameOver", {
-        timeSurvived: elapsed,
+        timeSurvived: totalElapsed,
         avgMultiplier,
         finalScore,
         gridsBeaten,
         stabilityTokenUsed: stabilityTokenUsedRef.current,
+        continueState: currentContinueState,
       });
     }, 300);
   };
