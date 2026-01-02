@@ -54,5 +54,5 @@ ensurePreviewReachable = "/status"
 [userenv]
 
 [userenv.shared]
-"authorize.netapilogin" = "74Aeqa6Su"
 "authorize.nettrasactionkey" = "6jDzcXhe7w5727Nq"
+AUTHORIZE_NET_API_LOGIN_ID = "74Aeqa6Su"
