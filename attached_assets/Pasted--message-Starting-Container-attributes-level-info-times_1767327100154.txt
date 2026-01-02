@@ -1,0 +1,119 @@
+{"message":"Starting Container","attributes":{"level":"info"},"timestamp":"2026-01-02T04:06:47.000000000Z"}
+{"message":"    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.173467250Z"}
+{"message":"    at Function._load (node:internal/modules/cjs/loader:1192:37)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.173478654Z"}
+{"message":"    at TracingChannel.traceSync (node:diagnostics_channel:328:14)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.173486230Z"}
+{"message":"    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.173493034Z"}
+{"message":"    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.173499510Z"}
+{"message":"    at node:internal/main/run_main_module:36:49 {","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.173507505Z"}
+{"message":"  code: 'MODULE_NOT_FOUND',","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.173512492Z"}
+{"message":"  requireStack: []","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.173518121Z"}
+{"message":"}","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.173524789Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.173531142Z"}
+{"message":"npm warn config production Use `--omit=dev` instead.","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.173533120Z"}
+{"message":"Node.js v22.21.1","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.173537108Z"}
+{"message":"","attributes":{"level":"info"},"timestamp":"2026-01-02T04:06:48.173539249Z"}
+{"message":"> my-app@1.0.0 server:prod","attributes":{"level":"info"},"timestamp":"2026-01-02T04:06:48.173544112Z"}
+{"message":"> NODE_ENV=production node server_dist/index.js","attributes":{"level":"info"},"timestamp":"2026-01-02T04:06:48.173548329Z"}
+{"message":"","attributes":{"level":"info"},"timestamp":"2026-01-02T04:06:48.173552748Z"}
+{"message":"node:internal/modules/cjs/loader:1386","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.173557988Z"}
+{"message":"  throw err;","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.173564152Z"}
+{"message":"  ^","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.173569610Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.173573381Z"}
+{"message":"Error: Cannot find module '/app/server_dist/index.js'","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.173576830Z"}
+{"message":"    at Function._resolveFilename (node:internal/modules/cjs/loader:1383:15)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.173581535Z"}
+{"message":"    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.173585105Z"}
+{"message":"npm warn config production Use `--omit=dev` instead.","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.514683193Z"}
+{"message":"","attributes":{"level":"info"},"timestamp":"2026-01-02T04:06:48.557139209Z"}
+{"message":"> my-app@1.0.0 server:prod","attributes":{"level":"info"},"timestamp":"2026-01-02T04:06:48.557149992Z"}
+{"message":"> NODE_ENV=production node server_dist/index.js","attributes":{"level":"info"},"timestamp":"2026-01-02T04:06:48.557157313Z"}
+{"message":"","attributes":{"level":"info"},"timestamp":"2026-01-02T04:06:48.557164382Z"}
+{"message":"    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.598152433Z"}
+{"message":"    at node:internal/main/run_main_module:36:49 {","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.598160546Z"}
+{"message":"  code: 'MODULE_NOT_FOUND',","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.598166130Z"}
+{"message":"  requireStack: []","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.598171336Z"}
+{"message":"}","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.598175530Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.598182000Z"}
+{"message":"Node.js v22.21.1","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.598186714Z"}
+{"message":"node:internal/modules/cjs/loader:1386","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.598190405Z"}
+{"message":"  throw err;","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.598203761Z"}
+{"message":"  ^","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.598214923Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.598224803Z"}
+{"message":"Error: Cannot find module '/app/server_dist/index.js'","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.598235535Z"}
+{"message":"    at Function._resolveFilename (node:internal/modules/cjs/loader:1383:15)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.598247349Z"}
+{"message":"    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.598257724Z"}
+{"message":"    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.598266976Z"}
+{"message":"    at Function._load (node:internal/modules/cjs/loader:1192:37)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.598277684Z"}
+{"message":"    at TracingChannel.traceSync (node:diagnostics_channel:328:14)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.598287224Z"}
+{"message":"    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:48.598295911Z"}
+{"message":"npm warn config production Use `--omit=dev` instead.","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:49.717335404Z"}
+{"message":"","attributes":{"level":"info"},"timestamp":"2026-01-02T04:06:49.717347290Z"}
+{"message":"> my-app@1.0.0 server:prod","attributes":{"level":"info"},"timestamp":"2026-01-02T04:06:49.717353446Z"}
+{"message":"> NODE_ENV=production node server_dist/index.js","attributes":{"level":"info"},"timestamp":"2026-01-02T04:06:49.717358973Z"}
+{"message":"","attributes":{"level":"info"},"timestamp":"2026-01-02T04:06:49.717366001Z"}
+{"message":"node:internal/modules/cjs/loader:1386","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:49.717373623Z"}
+{"message":"  throw err;","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:49.717379004Z"}
+{"message":"  ^","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:49.717384522Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:49.717390057Z"}
+{"message":"Error: Cannot find module '/app/server_dist/index.js'","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:49.717397259Z"}
+{"message":"    at Function._resolveFilename (node:internal/modules/cjs/loader:1383:15)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:49.717402366Z"}
+{"message":"    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:49.717407066Z"}
+{"message":"    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:49.717411959Z"}
+{"message":"    at Function._load (node:internal/modules/cjs/loader:1192:37)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:49.717416559Z"}
+{"message":"    at TracingChannel.traceSync (node:diagnostics_channel:328:14)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:49.717421782Z"}
+{"message":"    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:49.717426818Z"}
+{"message":"    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:49.717431226Z"}
+{"message":"    at node:internal/main/run_main_module:36:49 {","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:49.717436802Z"}
+{"message":"  code: 'MODULE_NOT_FOUND',","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:49.717441767Z"}
+{"message":"  requireStack: []","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:49.717446816Z"}
+{"message":"}","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:49.717451057Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:49.717456251Z"}
+{"message":"Node.js v22.21.1","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:49.717465297Z"}
+{"message":"Stopping Container","attributes":{"level":"info"},"timestamp":"2026-01-02T04:06:50.000000000Z"}
+{"message":"npm warn config production Use `--omit=dev` instead.","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:51.482876048Z"}
+{"message":"","attributes":{"level":"info"},"timestamp":"2026-01-02T04:06:51.520832727Z"}
+{"message":"> my-app@1.0.0 server:prod","attributes":{"level":"info"},"timestamp":"2026-01-02T04:06:51.520846370Z"}
+{"message":"> NODE_ENV=production node server_dist/index.js","attributes":{"level":"info"},"timestamp":"2026-01-02T04:06:51.520856311Z"}
+{"message":"","attributes":{"level":"info"},"timestamp":"2026-01-02T04:06:51.520865357Z"}
+{"message":"}","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:51.560231863Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:51.560245348Z"}
+{"message":"Node.js v22.21.1","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:51.560256015Z"}
+{"message":"node:internal/modules/cjs/loader:1386","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:51.560259851Z"}
+{"message":"  throw err;","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:51.560271820Z"}
+{"message":"  ^","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:51.560280742Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:51.560292215Z"}
+{"message":"Error: Cannot find module '/app/server_dist/index.js'","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:51.560300433Z"}
+{"message":"    at Function._resolveFilename (node:internal/modules/cjs/loader:1383:15)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:51.560308292Z"}
+{"message":"    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:51.560316648Z"}
+{"message":"    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:51.560324267Z"}
+{"message":"    at Function._load (node:internal/modules/cjs/loader:1192:37)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:51.560331850Z"}
+{"message":"    at TracingChannel.traceSync (node:diagnostics_channel:328:14)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:51.560340429Z"}
+{"message":"    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:51.560348505Z"}
+{"message":"    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:51.560358748Z"}
+{"message":"    at node:internal/main/run_main_module:36:49 {","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:51.560366295Z"}
+{"message":"  code: 'MODULE_NOT_FOUND',","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:51.560374008Z"}
+{"message":"  requireStack: []","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:51.560381815Z"}
+{"message":"npm warn config production Use `--omit=dev` instead.","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:52.595995700Z"}
+{"message":"","attributes":{"level":"info"},"timestamp":"2026-01-02T04:06:52.596005440Z"}
+{"message":"> my-app@1.0.0 server:prod","attributes":{"level":"info"},"timestamp":"2026-01-02T04:06:52.596013246Z"}
+{"message":"> NODE_ENV=production node server_dist/index.js","attributes":{"level":"info"},"timestamp":"2026-01-02T04:06:52.596020399Z"}
+{"message":"","attributes":{"level":"info"},"timestamp":"2026-01-02T04:06:52.596027449Z"}
+{"message":"node:internal/modules/cjs/loader:1386","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:52.600831131Z"}
+{"message":"  throw err;","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:52.600839143Z"}
+{"message":"  ^","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:52.600844251Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:52.600849159Z"}
+{"message":"Error: Cannot find module '/app/server_dist/index.js'","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:52.600855106Z"}
+{"message":"    at Function._resolveFilename (node:internal/modules/cjs/loader:1383:15)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:52.600860078Z"}
+{"message":"    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:52.600864591Z"}
+{"message":"    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:52.600870077Z"}
+{"message":"    at Function._load (node:internal/modules/cjs/loader:1192:37)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:52.600874062Z"}
+{"message":"    at TracingChannel.traceSync (node:diagnostics_channel:328:14)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:52.600878736Z"}
+{"message":"    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:52.600884850Z"}
+{"message":"    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:52.600888637Z"}
+{"message":"    at node:internal/main/run_main_module:36:49 {","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:52.600892837Z"}
+{"message":"  code: 'MODULE_NOT_FOUND',","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:52.600898678Z"}
+{"message":"  requireStack: []","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:52.600903156Z"}
+{"message":"}","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:52.600907607Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:52.600911644Z"}
+{"message":"Node.js v22.21.1","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:52.600916016Z"}
+{"message":"npm warn config production Use `--omit=dev` instead.","attributes":{"level":"error"},"timestamp":"2026-01-02T04:06:54.085414280Z"}
+{"message":"","attributes":{"level":"info"},"timestamp":"2026-01-02T04:06:54.085428719Z"}

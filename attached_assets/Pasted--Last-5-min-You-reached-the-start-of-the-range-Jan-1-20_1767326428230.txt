@@ -1,0 +1,124 @@
+
+
+Last 5 min
+
+
+You reached the start of the range
+Jan 1, 2026, 10:54 PM
+{"message":"Starting Container","attributes":{"level":"info"},"timestamp":"2026-01-02T03:59:14.000000000Z"}
+{"message":"    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926319530Z"}
+{"message":"    at ModuleJob._link (node:internal/modules/esm/module_job:182:49) {","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926332273Z"}
+{"message":"  code: 'ERR_MODULE_NOT_FOUND'","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926341411Z"}
+{"message":"}","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926349979Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926359205Z"}
+{"message":"Node.js v22.21.1","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926369170Z"}
+{"message":"    at packageResolve (node:internal/modules/esm/resolve:767:81)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926373707Z"}
+{"message":"    at moduleResolve (node:internal/modules/esm/resolve:853:18)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926380445Z"}
+{"message":"    at defaultResolve (node:internal/modules/esm/resolve:983:11)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926387897Z"}
+{"message":"    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926396202Z"}
+{"message":"    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926403282Z"}
+{"message":"node:internal/modules/package_json_reader:314","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926572699Z"}
+{"message":"  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926576488Z"}
+{"message":"        ^","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926580310Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926584299Z"}
+{"message":"Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/App' imported from /app/client/index.js","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926588153Z"}
+{"message":"    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926591972Z"}
+{"message":"    at packageResolve (node:internal/modules/esm/resolve:767:81)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926595613Z"}
+{"message":"    at moduleResolve (node:internal/modules/esm/resolve:853:18)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926599204Z"}
+{"message":"    at defaultResolve (node:internal/modules/esm/resolve:983:11)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926603200Z"}
+{"message":"    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926607017Z"}
+{"message":"    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926610749Z"}
+{"message":"    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926614622Z"}
+{"message":"    at ModuleJob._link (node:internal/modules/esm/module_job:182:49) {","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926618487Z"}
+{"message":"  code: 'ERR_MODULE_NOT_FOUND'","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926622334Z"}
+{"message":"}","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926626102Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926630478Z"}
+{"message":"Node.js v22.21.1","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926634365Z"}
+{"message":"node:internal/modules/package_json_reader:314","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926638170Z"}
+{"message":"  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926641822Z"}
+{"message":"        ^","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926645549Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926650053Z"}
+{"message":"Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/App' imported from /app/client/index.js","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926653795Z"}
+{"message":"    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:15.926657557Z"}
+{"message":"    at ModuleJob._link (node:internal/modules/esm/module_job:182:49) {","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.247790444Z"}
+{"message":"node:internal/modules/package_json_reader:314","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.247797528Z"}
+{"message":"  code: 'ERR_MODULE_NOT_FOUND'","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.247803421Z"}
+{"message":"  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.247806940Z"}
+{"message":"}","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.247814076Z"}
+{"message":"        ^","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.247815343Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.247821753Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.247825029Z"}
+{"message":"Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/App' imported from /app/client/index.js","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.247828007Z"}
+{"message":"    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.247833279Z"}
+{"message":"Node.js v22.21.1","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.247835101Z"}
+{"message":"    at packageResolve (node:internal/modules/esm/resolve:767:81)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.247838301Z"}
+{"message":"    at moduleResolve (node:internal/modules/esm/resolve:853:18)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.247843322Z"}
+{"message":"    at defaultResolve (node:internal/modules/esm/resolve:983:11)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.247847690Z"}
+{"message":"    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.247851536Z"}
+{"message":"    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.247855243Z"}
+{"message":"    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.247859173Z"}
+{"message":"node:internal/modules/package_json_reader:314","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.784109175Z"}
+{"message":"  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.784116871Z"}
+{"message":"        ^","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.784123031Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.784128907Z"}
+{"message":"Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/App' imported from /app/client/index.js","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.784135789Z"}
+{"message":"    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.784142536Z"}
+{"message":"    at packageResolve (node:internal/modules/esm/resolve:767:81)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.784149091Z"}
+{"message":"    at moduleResolve (node:internal/modules/esm/resolve:853:18)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.784155063Z"}
+{"message":"    at defaultResolve (node:internal/modules/esm/resolve:983:11)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.784161666Z"}
+{"message":"    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.784167575Z"}
+{"message":"    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.784173500Z"}
+{"message":"    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.784179331Z"}
+{"message":"    at ModuleJob._link (node:internal/modules/esm/module_job:182:49) {","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.784184920Z"}
+{"message":"  code: 'ERR_MODULE_NOT_FOUND'","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.784190417Z"}
+{"message":"}","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.784196047Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.784202189Z"}
+{"message":"Node.js v22.21.1","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:16.784207877Z"}
+{"message":"node:internal/modules/package_json_reader:314","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:17.505037716Z"}
+{"message":"  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:17.505047070Z"}
+{"message":"        ^","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:17.505053253Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:17.505060110Z"}
+{"message":"Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/App' imported from /app/client/index.js","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:17.505066580Z"}
+{"message":"    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:17.505072112Z"}
+{"message":"    at packageResolve (node:internal/modules/esm/resolve:767:81)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:17.505078071Z"}
+{"message":"    at moduleResolve (node:internal/modules/esm/resolve:853:18)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:17.505083648Z"}
+{"message":"    at defaultResolve (node:internal/modules/esm/resolve:983:11)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:17.505092182Z"}
+{"message":"    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:17.505098816Z"}
+{"message":"    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:17.505105673Z"}
+{"message":"    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:17.505112284Z"}
+{"message":"    at ModuleJob._link (node:internal/modules/esm/module_job:182:49) {","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:17.505118448Z"}
+{"message":"  code: 'ERR_MODULE_NOT_FOUND'","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:17.505125703Z"}
+{"message":"}","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:17.505132442Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:17.505140141Z"}
+{"message":"Node.js v22.21.1","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:17.505147113Z"}
+{"message":"node:internal/modules/package_json_reader:314","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:18.323222123Z"}
+{"message":"  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:18.323234178Z"}
+{"message":"        ^","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:18.323241307Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:18.323248870Z"}
+{"message":"Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/App' imported from /app/client/index.js","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:18.323255747Z"}
+{"message":"    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:18.323264333Z"}
+{"message":"    at packageResolve (node:internal/modules/esm/resolve:767:81)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:18.323271175Z"}
+{"message":"    at moduleResolve (node:internal/modules/esm/resolve:853:18)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:18.323340620Z"}
+{"message":"    at defaultResolve (node:internal/modules/esm/resolve:983:11)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:18.323345115Z"}
+{"message":"    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:18.323349733Z"}
+{"message":"    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:18.323354316Z"}
+{"message":"    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:18.323360040Z"}
+{"message":"    at ModuleJob._link (node:internal/modules/esm/module_job:182:49) {","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:18.323364442Z"}
+{"message":"  code: 'ERR_MODULE_NOT_FOUND'","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:18.323368316Z"}
+{"message":"}","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:18.323372699Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:18.323376855Z"}
+{"message":"Node.js v22.21.1","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:18.323381089Z"}
+{"message":"node:internal/modules/package_json_reader:314","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:19.345227808Z"}
+{"message":"  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:19.345235318Z"}
+{"message":"        ^","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:19.345245215Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:19.345252884Z"}
+{"message":"Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/App' imported from /app/client/index.js","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:19.345260214Z"}
+{"message":"    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:19.345267820Z"}
+{"message":"    at packageResolve (node:internal/modules/esm/resolve:767:81)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:19.345275516Z"}
+{"message":"    at moduleResolve (node:internal/modules/esm/resolve:853:18)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:19.345283063Z"}
+{"message":"    at defaultResolve (node:internal/modules/esm/resolve:983:11)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:19.345290527Z"}
+{"message":"    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:19.345298275Z"}
+{"message":"    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:19.345306266Z"}
+{"message":"    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:19.345314878Z"}
+{"message":"    at ModuleJob._link (node:internal/modules/esm/module_job:182:49) {","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:19.345322655Z"}
+{"message":"  code: 'ERR_MODULE_NOT_FOUND'","attributes":{"level":"error"},"timestamp":"2026-01-02T03:59:19.345329818Z"}
