@@ -28,6 +28,7 @@ const INITIAL_CRACK_DELAY = 1500;
 const MIN_CRACK_DELAY = 300;
 const CRACK_SPEEDUP_RATE = 15;
 const MULTIPLIER_MAX_TIME = 6;
+const MIN_MOVE_INTERVAL = 300;
 
 const NEON_PALETTES = [
   { safe: "#00FF88", accent: "#00FFCC" },
@@ -241,11 +242,6 @@ export default function GameScreen() {
       transitionToNextGrid();
       return;
     }
-    
-    if (safeTiles.length <= 1) {
-      endGame();
-      return;
-    }
 
     const tilesToCrack = Math.min(
       gridNumberRef.current >= 4 ? 3 : gridNumberRef.current >= 2 ? 2 : 1,
@@ -327,12 +323,16 @@ export default function GameScreen() {
 
   const handleMove = useCallback(() => {
     if (!gameActiveRef.current) return;
+    
+    const now = Date.now();
+    const timeSinceLastMove = now - lastMoveTimeRef.current;
+    if (timeSinceLastMove < MIN_MOVE_INTERVAL) return;
 
     if (vibrationEnabled) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }
 
-    const timeSinceMove = (Date.now() - lastMoveTimeRef.current) / 1000;
+    const timeSinceMove = timeSinceLastMove / 1000;
     const currentMultiplier = 1 + Math.min(timeSinceMove / MULTIPLIER_MAX_TIME, 1) * 2;
     multiplierAccumulator.current.push(currentMultiplier);
     
