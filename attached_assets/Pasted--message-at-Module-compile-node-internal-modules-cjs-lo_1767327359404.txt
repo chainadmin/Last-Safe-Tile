@@ -1,0 +1,52 @@
+{"message":"    at Module._compile (node:internal/modules/cjs/loader:1328:27)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:35.641568437Z"}
+{"message":"    at Module._extensions..js (node:internal/modules/cjs/loader:1422:10)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:35.641575286Z"}
+{"message":"    at Module.load (node:internal/modules/cjs/loader:1203:32)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:35.641693644Z"}
+{"message":"    at Module._load (node:internal/modules/cjs/loader:1019:12)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:35.641705438Z"}
+{"message":"    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:128:12)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:35.641713874Z"}
+{"message":"    at node:internal/main/run_main_module:28:49","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:35.641720852Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:35.641726573Z"}
+{"message":"Node.js v18.20.5","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:35.641733002Z"}
+{"message":"npm warn config production Use `--omit=dev` instead.","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:37.840023933Z"}
+{"message":"","attributes":{"level":"info"},"timestamp":"2026-01-02T04:15:37.840032860Z"}
+{"message":"> my-app@1.0.0 server:prod","attributes":{"level":"info"},"timestamp":"2026-01-02T04:15:37.840045105Z"}
+{"message":"> NODE_ENV=production node server_dist/index.js","attributes":{"level":"info"},"timestamp":"2026-01-02T04:15:37.840054776Z"}
+{"message":"","attributes":{"level":"info"},"timestamp":"2026-01-02T04:15:37.840063961Z"}
+{"message":"(node:15) Warning: To load an ES module, set \"type\": \"module\" in the package.json or use the .mjs extension.","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:37.840073148Z"}
+{"message":"(Use `node --trace-warnings ...` to show where the warning was created)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:37.840081527Z"}
+{"message":"/app/server_dist/index.js:8","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:37.840090441Z"}
+{"message":"import express from \"express\";","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:37.840098315Z"}
+{"message":"^^^^^^","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:37.840106407Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:37.840114507Z"}
+{"message":"SyntaxError: Cannot use import statement outside a module","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:37.840122957Z"}
+{"message":"    at internalCompileFunction (node:internal/vm:76:18)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:37.840133948Z"}
+{"message":"    at wrapSafe (node:internal/modules/cjs/loader:1283:20)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:37.840142350Z"}
+{"message":"    at Module._compile (node:internal/modules/cjs/loader:1328:27)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:37.840151058Z"}
+{"message":"    at Module._extensions..js (node:internal/modules/cjs/loader:1422:10)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:37.840159412Z"}
+{"message":"    at Module.load (node:internal/modules/cjs/loader:1203:32)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:37.840168123Z"}
+{"message":"    at Module._load (node:internal/modules/cjs/loader:1019:12)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:37.840184784Z"}
+{"message":"    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:128:12)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:37.840199613Z"}
+{"message":"    at node:internal/main/run_main_module:28:49","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:37.840209671Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:37.840217841Z"}
+{"message":"Node.js v18.20.5","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:37.840227337Z"}
+{"message":"npm warn config production Use `--omit=dev` instead.","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:39.080790909Z"}
+{"message":"","attributes":{"level":"info"},"timestamp":"2026-01-02T04:15:39.080805063Z"}
+{"message":"> my-app@1.0.0 server:prod","attributes":{"level":"info"},"timestamp":"2026-01-02T04:15:39.080812073Z"}
+{"message":"> NODE_ENV=production node server_dist/index.js","attributes":{"level":"info"},"timestamp":"2026-01-02T04:15:39.080818574Z"}
+{"message":"","attributes":{"level":"info"},"timestamp":"2026-01-02T04:15:39.080825595Z"}
+{"message":"(node:15) Warning: To load an ES module, set \"type\": \"module\" in the package.json or use the .mjs extension.","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:39.080905969Z"}
+{"message":"(Use `node --trace-warnings ...` to show where the warning was created)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:39.080914502Z"}
+{"message":"/app/server_dist/index.js:8","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:39.080921254Z"}
+{"message":"import express from \"express\";","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:39.080931051Z"}
+{"message":"^^^^^^","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:39.080939900Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:39.080948005Z"}
+{"message":"SyntaxError: Cannot use import statement outside a module","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:39.080955766Z"}
+{"message":"    at internalCompileFunction (node:internal/vm:76:18)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:39.080962088Z"}
+{"message":"    at wrapSafe (node:internal/modules/cjs/loader:1283:20)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:39.080968937Z"}
+{"message":"    at Module._compile (node:internal/modules/cjs/loader:1328:27)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:39.080974968Z"}
+{"message":"    at Module._extensions..js (node:internal/modules/cjs/loader:1422:10)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:39.080981590Z"}
+{"message":"    at Module.load (node:internal/modules/cjs/loader:1203:32)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:39.081338330Z"}
+{"message":"    at Module._load (node:internal/modules/cjs/loader:1019:12)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:39.081353425Z"}
+{"message":"    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:128:12)","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:39.081360023Z"}
+{"message":"    at node:internal/main/run_main_module:28:49","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:39.081366722Z"}
+{"message":"","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:39.081374526Z"}
+{"message":"Node.js v18.20.5","attributes":{"level":"error"},"timestamp":"2026-01-02T04:15:39.081382054Z"}
