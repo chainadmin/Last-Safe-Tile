@@ -19,7 +19,8 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.lastsafetile.app"
+      "package": "com.lastsafetile.app",
+      "versionCode": 2
     },
     "web": {
       "output": "single",
