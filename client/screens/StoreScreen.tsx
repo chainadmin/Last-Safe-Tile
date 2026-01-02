@@ -54,26 +54,27 @@ function CoinPack({ coins, price, popular, onPurchase, delay }: CoinPackProps) {
   };
 
   return (
-    <Animated.View entering={FadeInDown.delay(delay).springify()}>
-      <Pressable onPress={handlePress} onPressIn={handlePressIn} onPressOut={handlePressOut}>
-        <Animated.View style={[styles.packCard, popular && styles.popularCard, animatedStyle]}>
-          {popular ? (
-            <View style={styles.popularBadge}>
-              <ThemedText style={styles.popularText}>MOST POPULAR</ThemedText>
-            </View>
-          ) : null}
-          <View style={styles.packContent}>
-            <View style={styles.coinInfo}>
-              <Feather name="circle" size={32} color={GameColors.premium} />
-              <ThemedText style={styles.coinAmount}>{coins}</ThemedText>
-            </View>
-            <View style={styles.priceButton}>
-              <ThemedText style={styles.priceText}>{price}</ThemedText>
-            </View>
+    <Pressable onPress={handlePress} onPressIn={handlePressIn} onPressOut={handlePressOut}>
+      <Animated.View 
+        entering={FadeInDown.delay(delay).springify()}
+        style={[styles.packCard, popular && styles.popularCard, animatedStyle]}
+      >
+        {popular ? (
+          <View style={styles.popularBadge}>
+            <ThemedText style={styles.popularText}>MOST POPULAR</ThemedText>
           </View>
-        </Animated.View>
-      </Pressable>
-    </Animated.View>
+        ) : null}
+        <View style={styles.packContent}>
+          <View style={styles.coinInfo}>
+            <Feather name="circle" size={32} color={GameColors.premium} />
+            <ThemedText style={styles.coinAmount}>{coins}</ThemedText>
+          </View>
+          <View style={styles.priceButton}>
+            <ThemedText style={styles.priceText}>{price}</ThemedText>
+          </View>
+        </View>
+      </Animated.View>
+    </Pressable>
   );
 }
 
@@ -289,30 +290,28 @@ export default function StoreScreen() {
           <ThemedText style={styles.sectionTitle}>Power Items</ThemedText>
         </Animated.View>
 
-        <Animated.View entering={FadeInDown.delay(700).springify()}>
-          <Pressable onPress={handleBuyStabilityToken}>
-            <View style={styles.powerItemCard}>
-              <View style={styles.powerItemHeader}>
-                <View style={styles.powerItemIcon}>
-                  <Feather name="shield" size={24} color={GameColors.accent} />
-                </View>
-                <View style={styles.powerItemInfo}>
-                  <ThemedText style={styles.powerItemName}>Stability Token</ThemedText>
-                  <ThemedText style={styles.powerItemDesc}>
-                    Prevents your tile from cracking once per game
-                  </ThemedText>
-                </View>
+        <Pressable onPress={handleBuyStabilityToken}>
+          <Animated.View entering={FadeInDown.delay(700).springify()} style={styles.powerItemCard}>
+            <View style={styles.powerItemHeader}>
+              <View style={styles.powerItemIcon}>
+                <Feather name="shield" size={24} color={GameColors.accent} />
               </View>
-              <View style={styles.powerItemFooter}>
-                <ThemedText style={styles.ownedText}>Owned: {stabilityTokens}</ThemedText>
-                <View style={styles.powerItemPrice}>
-                  <Feather name="circle" size={16} color={GameColors.premium} />
-                  <ThemedText style={styles.priceAmount}>5</ThemedText>
-                </View>
+              <View style={styles.powerItemInfo}>
+                <ThemedText style={styles.powerItemName}>Stability Token</ThemedText>
+                <ThemedText style={styles.powerItemDesc}>
+                  Prevents your tile from cracking once per game
+                </ThemedText>
               </View>
             </View>
-          </Pressable>
-        </Animated.View>
+            <View style={styles.powerItemFooter}>
+              <ThemedText style={styles.ownedText}>Owned: {stabilityTokens}</ThemedText>
+              <View style={styles.powerItemPrice}>
+                <Feather name="circle" size={16} color={GameColors.premium} />
+                <ThemedText style={styles.priceAmount}>5</ThemedText>
+              </View>
+            </View>
+          </Animated.View>
+        </Pressable>
 
         <Animated.View entering={FadeInDown.delay(800).springify()} style={styles.disclaimer}>
           <Feather name="lock" size={14} color={GameColors.textSecondary} />
