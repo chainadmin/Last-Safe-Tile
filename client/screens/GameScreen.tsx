@@ -17,6 +17,7 @@ import Animated, {
   cancelAnimation,
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
+import { useAudioPlayer } from "expo-audio";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, "Game">;
 
@@ -61,6 +62,8 @@ export default function GameScreen() {
   const [hasStabilityToken, setHasStabilityToken] = useState(false);
   const [vibrationEnabled, setVibrationEnabled] = useState(true);
   const [visualWarningsEnabled, setVisualWarningsEnabled] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
   const [gridNumber, setGridNumber] = useState(1);
   const [showTokenUsedFeedback, setShowTokenUsedFeedback] = useState(false);
   const [currentScore, setCurrentScore] = useState(0);
@@ -88,14 +91,31 @@ export default function GameScreen() {
   const gridWidth = SCREEN_WIDTH - Spacing["2xl"] * 2;
   const tileSize = (gridWidth - (INITIAL_GRID_SIZE - 1) * TILE_GAP) / INITIAL_GRID_SIZE;
 
+  const audioPlayer = useAudioPlayer(
+    "https://assets.mixkit.co/music/preview/mixkit-game-level-music-689.mp3"
+  );
+
   useEffect(() => {
     loadSettings();
     initGame();
     return () => {
       if (gameLoopRef.current) clearInterval(gameLoopRef.current);
       if (crackTimerRef.current) clearTimeout(crackTimerRef.current);
+      audioPlayer.pause();
     };
   }, []);
+
+  useEffect(() => {
+    if (!settingsLoaded) return;
+    
+    if (soundEnabled && gameActive) {
+      audioPlayer.loop = true;
+      audioPlayer.volume = 0.3;
+      audioPlayer.play();
+    } else {
+      audioPlayer.pause();
+    }
+  }, [settingsLoaded, soundEnabled, gameActive]);
 
   const loadSettings = async () => {
     const [settings, tokens] = await Promise.all([
@@ -104,8 +124,10 @@ export default function GameScreen() {
     ]);
     setVibrationEnabled(settings.vibrationEnabled);
     setVisualWarningsEnabled(settings.visualWarningsEnabled);
+    setSoundEnabled(settings.soundEnabled);
     setHasStabilityToken(tokens > 0);
     hasStabilityTokenRef.current = tokens > 0;
+    setSettingsLoaded(true);
   };
 
   const initGame = () => {
@@ -225,21 +247,30 @@ export default function GameScreen() {
       return;
     }
 
-    const randomTile = safeTiles[Math.floor(Math.random() * safeTiles.length)];
+    const tilesToCrack = Math.min(
+      gridNumberRef.current >= 4 ? 3 : gridNumberRef.current >= 2 ? 2 : 1,
+      safeTiles.length - 1
+    );
+    
+    const shuffled = [...safeTiles].sort(() => Math.random() - 0.5);
+    const selectedTiles = shuffled.slice(0, tilesToCrack);
     
     if (vibrationEnabled) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
 
+    const selectedIds = new Set(selectedTiles.map(t => t.id));
     const updatedTiles = currentTiles.map((t) =>
-      t.id === randomTile.id ? { ...t, state: "cracking" as TileState } : t
+      selectedIds.has(t.id) ? { ...t, state: "cracking" as TileState } : t
     );
     setTiles(updatedTiles);
     tilesRef.current = updatedTiles;
 
-    setTimeout(() => {
-      removeCrackedTile(randomTile.id, randomTile.row, randomTile.col);
-    }, 700);
+    selectedTiles.forEach((tile) => {
+      setTimeout(() => {
+        removeCrackedTile(tile.id, tile.row, tile.col);
+      }, 700);
+    });
 
     const gridElapsed = (Date.now() - gridStartTimeRef.current) / 1000;
     const baseDelay = Math.max(MIN_CRACK_DELAY, INITIAL_CRACK_DELAY - (gridNumberRef.current - 1) * 200);
@@ -457,6 +488,8 @@ export default function GameScreen() {
                 height: tileSize * 0.6,
                 borderRadius: tileSize * 0.3,
                 backgroundColor: currentPalette.accent,
+                marginLeft: (tileSize - tileSize * 0.6) / 2,
+                marginTop: (tileSize - tileSize * 0.6) / 2,
               },
               playerAnimatedStyle,
             ]}
@@ -656,8 +689,6 @@ const styles = StyleSheet.create({
     backgroundColor: GameColors.accent,
     borderWidth: 3,
     borderColor: GameColors.textPrimary,
-    marginLeft: "7%",
-    marginTop: "7%",
   },
   footer: {
     paddingHorizontal: Spacing["2xl"],
