@@ -183,33 +183,41 @@ export default function GameScreen() {
   };
 
   const restoreGame = (state: ContinueState) => {
-    const restoredTiles = state.tiles.map(t => ({ ...t, state: t.state as TileState }));
-    setTiles(restoredTiles);
-    tilesRef.current = restoredTiles;
-    
-    setPlayerPosition(state.playerPosition);
-    playerPositionRef.current = state.playerPosition;
-    playerX.value = state.playerPosition.col;
-    playerY.value = state.playerPosition.row;
-    
-    setGridNumber(state.gridNumber);
-    gridNumberRef.current = state.gridNumber;
-    
-    scoreRef.current = state.currentScore;
-    setCurrentScore(state.currentScore);
-    
-    continuedElapsedRef.current = state.elapsedTime;
-    startTimeRef.current = Date.now();
-    lastMoveTimeRef.current = Date.now();
-    gridStartTimeRef.current = Date.now();
-    
-    setCurrentPalette(NEON_PALETTES[state.paletteIndex % NEON_PALETTES.length]);
-    
-    multiplierAccumulator.current = [];
-    setMultiplier(1);
-    
-    gameActiveRef.current = true;
-    startGameLoop();
+    try {
+      const restoredTiles = state.tiles.map(t => ({ ...t, state: t.state as TileState }));
+      setTiles(restoredTiles);
+      tilesRef.current = restoredTiles;
+      
+      setPlayerPosition(state.playerPosition);
+      playerPositionRef.current = state.playerPosition;
+      playerX.value = state.playerPosition.col;
+      playerY.value = state.playerPosition.row;
+      
+      setGridNumber(state.gridNumber);
+      gridNumberRef.current = state.gridNumber;
+      
+      scoreRef.current = state.currentScore;
+      setCurrentScore(state.currentScore);
+      
+      continuedElapsedRef.current = state.elapsedTime;
+      startTimeRef.current = Date.now();
+      lastMoveTimeRef.current = Date.now();
+      gridStartTimeRef.current = Date.now();
+      
+      setCurrentPalette(NEON_PALETTES[state.paletteIndex % NEON_PALETTES.length]);
+      
+      multiplierAccumulator.current = [];
+      setMultiplier(1);
+      setStabilityTokenUsed(false);
+      stabilityTokenUsedRef.current = false;
+      
+      setGameActive(true);
+      gameActiveRef.current = true;
+      startGameLoop();
+    } catch (error) {
+      // If restore fails, start fresh game
+      initGame();
+    }
   };
 
   const transitionToNextGrid = () => {
