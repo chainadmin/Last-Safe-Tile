@@ -81,10 +81,14 @@ Critical design decision: No back gestures during active gameplay to prevent acc
 - **Optional secret for iOS validation**: APPLE_SHARED_SECRET
 - **Test mode**: Uses sandbox APIs in development
 
-### Ads (Placeholder for future implementation)
-- **AdMob ready**: Structure in client/lib/ads.ts for banner, interstitial, and rewarded ads
-- **Requires**: react-native-google-mobile-ads library + development build
-- **Ad unit IDs**: Need to be configured in AdMob console and updated in ads.ts
+### Ads (AdMob Integration)
+- **AdMob SDK**: react-native-google-mobile-ads configured in app.json
+- **App ID**: ca-app-pub-1580761947831808~1773139218 (both iOS and Android)
+- **Banner Ad Unit ID**: ca-app-pub-1580761947831808/8250933561 (displayed on main menu)
+- **Interstitial Ad Unit ID**: ca-app-pub-1580761947831808/6019505985 (shown after game over)
+- **Reactive subscription pattern**: Uses subscribeToAdsReady() for component re-rendering when ads become available
+- **Platform limitation**: Ads require development build; won't work in Expo Go
+- **Test mode**: Uses test ad IDs in development builds
 
 ### Environment
 - **Replit-specific**: Uses REPLIT_DEV_DOMAIN and REPLIT_DOMAINS for CORS and proxy configuration
