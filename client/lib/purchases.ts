@@ -19,27 +19,15 @@ export const COIN_PACKS: CoinPack[] = [
 interface IAPPurchase {
   productId: string;
   transactionReceipt?: string;
-  acknowledged?: boolean;
+  transactionId?: string;
+  purchaseToken?: string;
 }
 
-interface IAPModule {
-  connectAsync: () => Promise<void>;
-  disconnectAsync: () => Promise<void>;
-  getProductsAsync: (productIds: string[]) => Promise<any>;
-  purchaseItemAsync: (productId: string) => Promise<void>;
-  finishTransactionAsync: (purchase: IAPPurchase, consumeItem: boolean) => Promise<void>;
-  getPurchaseHistoryAsync: () => Promise<{ results?: IAPPurchase[] }>;
-  setPurchaseListener: (listener: (event: any) => void) => { remove: () => void };
-  IAPResponseCode: {
-    OK: number;
-    USER_CANCELED: number;
-    ERROR: number;
-  };
-}
-
-let iapModule: IAPModule | null = null;
+let iapModule: typeof import("react-native-iap") | null = null;
 let iapInitialized = false;
 let iapAvailable = false;
+let purchaseUpdateSubscription: { remove: () => void } | null = null;
+let purchaseErrorSubscription: { remove: () => void } | null = null;
 
 export async function initializePurchases(): Promise<boolean> {
   if (Platform.OS === "web") {
@@ -47,18 +35,19 @@ export async function initializePurchases(): Promise<boolean> {
   }
 
   try {
-    const module = await import("expo-in-app-purchases") as unknown as IAPModule;
+    const module = await import("react-native-iap");
     iapModule = module;
-    await iapModule.connectAsync();
+    
+    await iapModule.initConnection();
     iapInitialized = true;
     iapAvailable = true;
     
     const productIds = COIN_PACKS.map(pack => pack.productId);
-    await iapModule.getProductsAsync(productIds);
+    await iapModule.fetchProducts({ skus: productIds });
     
     return true;
   } catch (error) {
-    console.log("In-app purchases not available (requires development build)");
+    console.log("In-app purchases not available (requires development build):", error);
     iapAvailable = false;
     return false;
   }
@@ -74,11 +63,16 @@ export async function purchaseProduct(productId: string): Promise<{ success: boo
   }
 
   try {
-    await iapModule.purchaseItemAsync(productId);
+    await iapModule.requestPurchase({
+      request: Platform.OS === "ios" 
+        ? { apple: { sku: productId } }
+        : { google: { skus: [productId] } },
+      type: "in-app",
+    });
     return { success: true };
   } catch (error: unknown) {
     const err = error as { code?: string; message?: string };
-    if (err.code === "E_USER_CANCELLED") {
+    if (err.code === "E_USER_CANCELLED" || err.message?.includes("cancelled")) {
       return { success: false, error: "Purchase cancelled" };
     }
     return { success: false, error: err.message || "Purchase failed" };
@@ -93,23 +87,30 @@ export function setPurchaseListener(
     return null;
   }
 
-  const subscription = iapModule.setPurchaseListener((event: { responseCode: number; results?: IAPPurchase[]; errorCode?: string }) => {
-    const { responseCode, results, errorCode } = event;
-    if (responseCode === iapModule!.IAPResponseCode.OK && results) {
-      results.forEach((purchase: IAPPurchase) => {
-        if (!purchase.acknowledged) {
-          onPurchaseComplete(purchase);
-        }
-      });
-    } else if (responseCode === iapModule!.IAPResponseCode.USER_CANCELED) {
+  purchaseUpdateSubscription = iapModule.purchaseUpdatedListener((purchase) => {
+    const mappedPurchase: IAPPurchase = {
+      productId: purchase.productId,
+      transactionReceipt: (purchase as any).transactionReceipt || undefined,
+      transactionId: purchase.transactionId || undefined,
+      purchaseToken: purchase.purchaseToken || undefined,
+    };
+    onPurchaseComplete(mappedPurchase);
+  });
+
+  purchaseErrorSubscription = iapModule.purchaseErrorListener((error) => {
+    const errorCode = String(error.code || "error");
+    if (errorCode.includes("USER_CANCELLED") || errorCode.includes("E_USER_CANCELLED")) {
       onPurchaseError({ code: "cancelled", message: "Purchase cancelled" });
     } else {
-      onPurchaseError({ code: errorCode || "error", message: "Purchase failed" });
+      onPurchaseError({ code: errorCode, message: error.message || "Purchase failed" });
     }
   });
 
   return () => {
-    subscription.remove();
+    purchaseUpdateSubscription?.remove();
+    purchaseErrorSubscription?.remove();
+    purchaseUpdateSubscription = null;
+    purchaseErrorSubscription = null;
   };
 }
 
@@ -117,7 +118,13 @@ export async function finishPurchase(purchase: IAPPurchase): Promise<boolean> {
   if (!iapModule) return false;
   
   try {
-    await iapModule.finishTransactionAsync(purchase, true);
+    if (Platform.OS === "android" && purchase.purchaseToken) {
+      await iapModule.acknowledgePurchaseAndroid(purchase.purchaseToken);
+    }
+    await iapModule.finishTransaction({ 
+      purchase: purchase as any, 
+      isConsumable: true 
+    });
     return true;
   } catch (error) {
     console.error("Failed to finish transaction:", error);
@@ -140,6 +147,7 @@ export async function validateAndProcessPurchase(
       body: JSON.stringify({
         productId: purchase.productId,
         transactionReceipt: purchase.transactionReceipt,
+        purchaseToken: purchase.purchaseToken,
         platform: Platform.OS,
       }),
     });
@@ -165,8 +173,8 @@ export async function restorePurchases(): Promise<{ success: boolean; restored: 
   }
 
   try {
-    const { results } = await iapModule.getPurchaseHistoryAsync();
-    return { success: true, restored: results?.length || 0 };
+    const purchases = await iapModule.getAvailablePurchases();
+    return { success: true, restored: purchases?.length || 0 };
   } catch (error) {
     console.error("Failed to restore purchases:", error);
     return { success: false, restored: 0 };
@@ -176,7 +184,11 @@ export async function restorePurchases(): Promise<{ success: boolean; restored: 
 export async function disconnectPurchases(): Promise<void> {
   if (iapModule && iapInitialized) {
     try {
-      await iapModule.disconnectAsync();
+      purchaseUpdateSubscription?.remove();
+      purchaseErrorSubscription?.remove();
+      purchaseUpdateSubscription = null;
+      purchaseErrorSubscription = null;
+      await iapModule.endConnection();
       iapInitialized = false;
     } catch (error) {
       console.error("Failed to disconnect IAP:", error);
