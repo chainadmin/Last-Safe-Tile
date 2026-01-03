@@ -16,11 +16,12 @@ export const COIN_PACKS: CoinPack[] = [
   { productId: "coins_300", coins: 300, price: "3.99", displayPrice: "$3.99", popular: false },
 ];
 
-interface IAPPurchase {
+export interface IAPPurchase {
   productId: string;
   transactionReceipt?: string;
   transactionId?: string;
   purchaseToken?: string;
+  rawPurchase: any;
 }
 
 let iapModule: typeof import("react-native-iap") | null = null;
@@ -88,11 +89,13 @@ export function setPurchaseListener(
   }
 
   purchaseUpdateSubscription = iapModule.purchaseUpdatedListener((purchase) => {
+    const rawPurchase = purchase as any;
     const mappedPurchase: IAPPurchase = {
       productId: purchase.productId,
-      transactionReceipt: (purchase as any).transactionReceipt || undefined,
+      transactionReceipt: rawPurchase.transactionReceipt || rawPurchase.transactionData || undefined,
       transactionId: purchase.transactionId || undefined,
       purchaseToken: purchase.purchaseToken || undefined,
+      rawPurchase: purchase,
     };
     onPurchaseComplete(mappedPurchase);
   });
@@ -122,7 +125,7 @@ export async function finishPurchase(purchase: IAPPurchase): Promise<boolean> {
       await iapModule.acknowledgePurchaseAndroid(purchase.purchaseToken);
     }
     await iapModule.finishTransaction({ 
-      purchase: purchase as any, 
+      purchase: purchase.rawPurchase, 
       isConsumable: true 
     });
     return true;
@@ -147,6 +150,7 @@ export async function validateAndProcessPurchase(
       body: JSON.stringify({
         productId: purchase.productId,
         transactionReceipt: purchase.transactionReceipt,
+        transactionId: purchase.transactionId,
         purchaseToken: purchase.purchaseToken,
         platform: Platform.OS,
       }),
