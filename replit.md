@@ -72,8 +72,9 @@ Critical design decision: No back gestures during active gameplay to prevent acc
 - **react-native-gesture-handler**: Touch gesture handling
 
 ### Payment Integration
-- **Multi-platform support**: iOS (Apple In-App Purchases), Android (Google Play Billing), Web (Authorize.net)
-- **Native IAP**: Uses expo-in-app-purchases for iOS/Android store purchases (requires development build)
+- **Multi-platform support**: iOS (Apple In-App Purchases), Android (Google Play Billing Library 6.0+), Web (Authorize.net)
+- **Native IAP**: Uses react-native-iap v14+ for iOS/Android store purchases (requires development build)
+- **Play Billing Library**: Version 6.0+ compliant (meets Google Play's August 2024 requirement)
 - **Authorize.net fallback**: Web/card payments with Accept.js for PCI-compliant tokenization
 - **Server-side validation**: Receipt validation for iOS (Apple), product catalog validation for all
 - **Product IDs**: coins_50, coins_120, coins_300 (must match App Store Connect / Google Play Console)
