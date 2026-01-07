@@ -111,12 +111,14 @@ export default function GameOverScreen() {
   useEffect(() => {
     checkHighScore();
     loadData();
-    
+  }, []);
+
+  const showAdOnce = async () => {
     if (!adShownRef.current) {
       adShownRef.current = true;
-      showInterstitialAd();
+      await showInterstitialAd();
     }
-  }, []);
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -143,6 +145,7 @@ export default function GameOverScreen() {
   };
 
   const handleRetry = useCallback(async () => {
+    await showAdOnce();
     if (dailyRetryAvailable) {
       await useDailyRetry();
     }
@@ -199,7 +202,8 @@ export default function GameOverScreen() {
     }
   }, [navigation, coins, continueState]);
 
-  const handleHome = useCallback(() => {
+  const handleHome = useCallback(async () => {
+    await showAdOnce();
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
