@@ -90,6 +90,11 @@ async function getGoogleAccessToken(serviceAccount: GoogleServiceAccount): Promi
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  app.get("/app-ads.txt", (req, res) => {
+    res.type("text/plain");
+    res.send("google.com, pub-1580761947831808, DIRECT, f08c47fec0942fa0");
+  });
+
   app.get("/api/products", (req, res) => {
     const products = Object.entries(COIN_PACKS).map(([id, pack]) => ({
       id,
