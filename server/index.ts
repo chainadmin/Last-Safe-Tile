@@ -186,6 +186,11 @@ function configureExpoAndLanding(app: express.Application) {
       return res.status(200).send(privacyPageTemplate);
     }
 
+    if (req.path === "/app-ads.txt") {
+      res.setHeader("Content-Type", "text/plain");
+      return res.status(200).send("google.com, pub-1580761947831808, DIRECT, f08c47fec0942fa0");
+    }
+
     if (req.path !== "/" && req.path !== "/manifest") {
       return next();
     }
